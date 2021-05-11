@@ -29,8 +29,8 @@ package_repository:
 
     - name: fluent-bit
       domain: tce.vmware.com
-      version: 1.7.4-vmware0
-      image: projects.registry.vmware.com/tce/fluent-bit@sha256:0707225bf045d6d9c842afea8fdea3939b5417cdc3eb4dadb7c68200d99891c7
+      version: 1.7.4-vmware1
+      image: projects.registry.vmware.com/tce/fluent-bit@sha256:57dceb2d3aa38ea75d7832c5e929f0916d854fcb7e8a4629f596c41eb36729f4
       description: Fluent Bit is an open source Log Processor and Forwarder.
 
     - name: gatekeeper
