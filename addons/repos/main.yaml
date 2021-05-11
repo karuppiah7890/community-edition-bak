@@ -29,8 +29,8 @@ package_repository:
 
     - name: fluent-bit
       domain: tce.vmware.com
-      version: 1.7.2-vmware0
-      image: projects.registry.vmware.com/tce/fluent-bit@sha256:ee50e9060e4cd8c2e18179ad2d16cd0e0fcee9261dd0634604107abfdd451662
+      version: 1.7.4-vmware0
+      image: projects.registry.vmware.com/tce/fluent-bit@sha256:0707225bf045d6d9c842afea8fdea3939b5417cdc3eb4dadb7c68200d99891c7
       description: Fluent Bit is an open source Log Processor and Forwarder.
 
     - name: gatekeeper
@@ -41,8 +41,8 @@ package_repository:
 
     - name: grafana
       domain: tce.vmware.com
-      version: 7.4.3-vmware0
-      image: projects.registry.vmware.com/tce/grafana@sha256:565f2dc71cecd153462f10487417063d638d338777edae13778b954955b6e28f
+      version: 7.5.5-vmware0
+      image: projects.registry.vmware.com/tce/grafana@sha256:e431efa1387afed411507ecd61432bc9f6134e9d41c9e38de98a9dfc2a1ab13a
       description: Grafana is open source visualization and analytics software.
 
     - name: knative-serving
@@ -53,8 +53,8 @@ package_repository:
 
     - name: prometheus
       domain: tce.vmware.com
-      version: 2.25.0-vmware0
-      image: projects.registry.vmware.com/tce/prometheus@sha256:afc6a8bf5f0607feb26e46b4899fbed890734e341fa1ef3003f6fcaefe26fb0b
+      version: 2.26.0-vmware0
+      image: projects.registry.vmware.com/tce/prometheus@sha256:64c6d74e34b4498892f8f8c0919a302167da17f69f939c93af592da46e2f0683
       description: A time series database for your metrics.
 
     - name: velero
