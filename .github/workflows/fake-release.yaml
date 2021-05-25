@@ -12,6 +12,10 @@ jobs:
     name: Fake Release (Testing)
     runs-on: ubuntu-latest
     steps:
+      - name: Free up some space by removing some unnecessary software
+        run: |
+          sudo rm -rf /usr/local/lib/android # will release about 10 GB and we don't need Android
+          sudo rm -rf /usr/share/dotnet # will release about 20GB and we you don't need .NET
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
