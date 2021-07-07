@@ -1,8 +1,9 @@
 name: TCE Docker Managed Cluster E2E Test
 
 on:
-  schedule:
-    - cron: "*/1 * * * *"
+  push:
+    branches:
+      - e2e-docker-ga-trial
 
 jobs:
   tce-docker-e2e-test:
