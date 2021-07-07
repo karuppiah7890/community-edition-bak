@@ -2,7 +2,7 @@ name: TCE Docker Managed Cluster E2E Test
 
 on:
   schedule:
-    cron: "0 0 * * *"
+    cron: "30 * * * *"
 
 jobs:
   tce-docker-e2e-test:
