@@ -46,7 +46,19 @@ done
 
 print_green "Waiting for kind cluster nodes to be ready"
 
-KUBECONFIG=kind-cluster.kubeconfig kubectl wait --for=condition=ready node --all --timeout=240s
+found_nodes="false"
+
+while [ "${found_nodes}" == "false" ]
+do
+    number_of_nodes=$(kubectl get nodes -o json | jq '.items | length')
+
+    if [ "${number_of_nodes}" != "0" ]; then
+        found_nodes="true"
+        KUBECONFIG=kind-cluster.kubeconfig kubectl wait --for=condition=ready node --all --timeout=240s
+    fi
+
+    sleep 20;
+done
 
 # "${MY_DIR}"/check-tce-cluster-creation.sh ${kind_cluster}
 
