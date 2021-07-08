@@ -52,9 +52,9 @@ export KUBECONFIG=kind-cluster.kubeconfig
 
 while [ "${found_nodes}" == "false" ]
 do
-    number_of_nodes=$(kubectl get nodes -o json | jq '.items | length')
+    number_of_nodes=$(kubectl get nodes -o json | jq '.items | length' || true)
 
-    if [ "${number_of_nodes}" != "0" ]; then
+    if [ "${number_of_nodes}" == "1" ]; then
         found_nodes="true"
         kubectl wait --for=condition=ready node --all --timeout=240s
     fi
