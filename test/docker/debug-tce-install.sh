@@ -32,6 +32,10 @@ print_green "Kind cluster is available: ${kind_cluster}"
 
 kind get kubeconfig --name ${kind_cluster} > kind-cluster.kubeconfig
 
+print_green "Waiting for kind cluster nodes to be ready"
+
+KUBECONFIG=kind-cluster.kubeconfig kubectl wait --for=condition=ready node --all --timeout=240s
+
 # "${MY_DIR}"/check-tce-cluster-creation.sh ${kind_cluster}
 
 print_green "Kind bootstrap cluster info - "

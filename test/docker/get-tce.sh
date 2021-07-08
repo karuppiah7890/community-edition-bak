@@ -24,7 +24,6 @@ chmod +x "${INSTALLATION_DIR}"/fetch
     --tag ${TCE_VERSION} \
     --release-asset ${TCE_RELEASE_TAR_BALL} \
     --github-oauth-token ${GH_ACCESS_TOKEN} \
-    --progress \
     "${INSTALLATION_DIR}"
 
 tar xzvf "${INSTALLATION_DIR}"/${TCE_RELEASE_TAR_BALL} --directory="${INSTALLATION_DIR}"
