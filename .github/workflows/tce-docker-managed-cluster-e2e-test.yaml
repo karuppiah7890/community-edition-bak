@@ -3,7 +3,8 @@ name: TCE Docker Managed Cluster E2E Test
 on:
   push:
     branches:
-      - e2e-docker-ga-trial
+      # - e2e-docker-ga-trial
+      - blah
 
 jobs:
   tce-docker-e2e-test:

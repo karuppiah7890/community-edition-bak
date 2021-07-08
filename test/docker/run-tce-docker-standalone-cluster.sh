@@ -8,8 +8,10 @@ set -x
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-"${MY_DIR}"/../install-dependencies.sh
-"${MY_DIR}"/../build-tce.sh
+# "${MY_DIR}"/../install-dependencies.sh
+# "${MY_DIR}"/../build-tce.sh
+
+"${MY_DIR}"/get-tce.sh
 
 guest_cluster_name="guest-cluster-${RANDOM}"
 
