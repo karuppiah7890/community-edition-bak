@@ -22,7 +22,7 @@ kind_cluster=""
 
 while [ -z "${kind_cluster}" ]
 do
-    sleep 2;
+    sleep 20;
     kind_cluster=$(kind get clusters -q)
 done
 
@@ -30,7 +30,19 @@ print_green "Kind cluster is available: ${kind_cluster}"
 
 # Check if the kind k8s cluster is up and running
 
-kind get kubeconfig --name ${kind_cluster} > kind-cluster.kubeconfig
+got_kubeconfig="false"
+
+while [ "${got_kubeconfig}" == "false" ]
+do
+    full_kubeconfig=$(kind get kubeconfig --name ${kind_cluster} || true)
+
+    if [ -n "${full_kubeconfig}" ]; then
+        kind get kubeconfig --name ${kind_cluster} > kind-cluster.kubeconfig
+        got_kubeconfig="true"
+    fi
+
+    sleep 20;
+done
 
 print_green "Waiting for kind cluster nodes to be ready"
 
