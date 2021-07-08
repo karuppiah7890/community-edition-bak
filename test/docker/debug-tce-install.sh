@@ -18,7 +18,7 @@ sudo mv ./kind /usr/local/bin/kind
 
 # Check if the kind bootstrap cluster is up and running
 
-{kind_cluster}=""
+kind_cluster=""
 
 while [ -z "${kind_cluster}" ]
 do
