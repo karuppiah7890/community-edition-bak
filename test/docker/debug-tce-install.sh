@@ -48,13 +48,15 @@ print_green "Waiting for kind cluster nodes to be ready"
 
 found_nodes="false"
 
+export KUBECONFIG=kind-cluster.kubeconfig
+
 while [ "${found_nodes}" == "false" ]
 do
     number_of_nodes=$(kubectl get nodes -o json | jq '.items | length')
 
     if [ "${number_of_nodes}" != "0" ]; then
         found_nodes="true"
-        KUBECONFIG=kind-cluster.kubeconfig kubectl wait --for=condition=ready node --all --timeout=240s
+        kubectl wait --for=condition=ready node --all --timeout=240s
     fi
 
     sleep 20;
@@ -64,15 +66,15 @@ done
 
 print_green "Kind bootstrap cluster info - "
 
-KUBECONFIG=kind-cluster.kubeconfig kubectl cluster-info
+kubectl cluster-info
 
 print_green "Kind bootstrap cluster nodes info - "
 
-KUBECONFIG=kind-cluster.kubeconfig kubectl get nodes
+kubectl get nodes
 
 print_green "Kind bootstrap cluster pods info - "
 
-KUBECONFIG=kind-cluster.kubeconfig kubectl get pods -A
+kubectl get pods -A
 
 print_system_resources() {
     print_green "Disk space available for Runner - "
