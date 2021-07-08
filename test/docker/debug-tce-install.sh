@@ -122,6 +122,7 @@ do
         if [[ "${is_ready}" != "True" ]]; then
             all_ready="false"
             kubectl describe pod -n "${namespace}" "${name}" | tail
+            kubectl logs -n "${namespace}" "${name}" || true
         fi
     done
 
