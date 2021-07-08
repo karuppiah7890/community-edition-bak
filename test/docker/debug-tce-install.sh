@@ -110,7 +110,7 @@ do
     all_ready="true"
     kubectl get pods -A \
     -o json \
-    | jq '.items[] | select(.metadata.name | { name: .metadata.name, namespace: .metadata.namespace }' \
+    | jq '.items[] | { name: .metadata.name, namespace: .metadata.namespace }' \
     | jq -s > "${all_pods_json_file}"
 
     jq -c '.[]' ${all_pods_json_file} | while read controller_pod; do
