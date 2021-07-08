@@ -103,17 +103,17 @@ print_system_resources
 # get all pods, filter out to get the providers and related pods - use "managers", check which are not ready, find issues in them by describing the pods
 
 temp_dir=$(mktemp -d)
-controller_pods_json_file="${temp_dir}/controller-pods.json"
+all_pods_json_file="${temp_dir}/all-pods.json"
 
 while true
 do
     all_ready="true"
     kubectl get pods -A \
     -o json \
-    | jq '.items[] | select(.metadata.name | test("manager")) | { name: .metadata.name, namespace: .metadata.namespace }' \
-    | jq -s > "${controller_pods_json_file}"
+    | jq '.items[] | select(.metadata.name | { name: .metadata.name, namespace: .metadata.namespace }' \
+    | jq -s > "${all_pods_json_file}"
 
-    jq -c '.[]' ${controller_pods_json_file} | while read controller_pod; do
+    jq -c '.[]' ${all_pods_json_file} | while read controller_pod; do
         name=$(echo ${controller_pod} | jq .name -r)
         namespace=$(echo ${controller_pod} | jq .namespace -r)
 
