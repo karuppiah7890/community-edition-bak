@@ -56,7 +56,11 @@ do
 
     if [ "${number_of_nodes}" == "1" ]; then
         found_nodes="true"
-        kubectl wait --for=condition=ready node --all --timeout=240s
+        for i in 1 2 3
+        do
+            kubectl wait --for=condition=ready node --all --timeout=240s || true
+            kubectl describe node | grep -i error
+        done
     fi
 
     sleep 20;
