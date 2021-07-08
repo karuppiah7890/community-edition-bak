@@ -11,7 +11,12 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # "${MY_DIR}"/../install-dependencies.sh
 # "${MY_DIR}"/../build-tce.sh
 
+"${MY_DIR}"/install-jq.sh
 "${MY_DIR}"/get-tce.sh
+
+echo "Running debug script in the background..."
+
+"${MY_DIR}"/debug-tce-install.sh &
 
 guest_cluster_name="guest-cluster-${RANDOM}"
 
