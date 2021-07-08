@@ -119,7 +119,7 @@ do
 
         is_ready=$(kubectl get pod -n "${namespace}" "${name}" -o json | jq '.status.conditions[] | select(.type == "Ready") | .status' -r)
 
-        if [[ "${is_ready}" == "False" ]]; then
+        if [[ "${is_ready}" != "True" ]]; then
             all_ready="false"
             kubectl describe pod -n "${namespace}" "${name}" | tail
         fi
