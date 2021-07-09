@@ -11,6 +11,8 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # "${MY_DIR}"/../install-dependencies.sh
 # "${MY_DIR}"/../build-tce.sh
 
+sudo sysctl net/netfilter/nf_conntrack_max=131072
+
 "${MY_DIR}"/install-jq.sh
 "${MY_DIR}"/get-tce.sh
 
