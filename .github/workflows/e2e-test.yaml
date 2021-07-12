@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix-aws-e2e-failing-trial
 
 jobs:
   e2e-test:
