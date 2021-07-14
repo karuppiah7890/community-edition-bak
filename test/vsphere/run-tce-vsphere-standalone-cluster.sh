@@ -39,22 +39,25 @@ ssh_config_file_template="${MY_DIR}"/ssh-config-template
 
 ssh_config_file=~/.ssh/config
 
-mkdir -p $(dirname ${ssh_config_file})
+mkdir -p "$(dirname ${ssh_config_file})"
 touch ${ssh_config_file}
 
-envsubst < ${ssh_config_file_template} >> ${ssh_config_file}
+envsubst < "${ssh_config_file_template}" >> ${ssh_config_file}
 
-mkdir -p $(dirname ${JUMPER_SSH_PRIVATE_KEY_LOCATION})
+mkdir -p "$(dirname ${JUMPER_SSH_PRIVATE_KEY_LOCATION})"
 touch ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 
+rm -rfv ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 printenv 'JUMPER_SSH_PRIVATE_KEY' > ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
+chmod 400 ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 
-sshuttle --verbose --auto-nets --daemon --remote ${JUMPER_SSH_HOST_NAME} ${VSPHERE_SERVER}/32 ${VSPHERE_CONTROL_PLANE_ENDPOINT}/32
+sshuttle --verbose --remote ${JUMPER_SSH_HOST_NAME} "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 &
+sshuttle_pid=${!}
 
-trap '{ kill $(cat ./sshuttle.pid); }' EXIT
+trap '{ kill ${sshuttle_pid}; }' EXIT
 
 # wait for sshuttle to do it's work - ssh to jumper host, handling local networking config etc
-# sleep 30
+sleep 10
 
 cluster_config_file_template="${MY_DIR}"/standalone-cluster-template.yaml
 
@@ -62,9 +65,19 @@ vsphere_temp_dir=$(mktemp -d)
 
 cluster_config_file="${vsphere_temp_dir}"/standalone-cluster.yaml
 
-envsubst < ${cluster_config_file_template} > ${cluster_config_file}
+envsubst < "${cluster_config_file_template}" > "${cluster_config_file}"
 
-tanzu standalone-cluster create ${guest_cluster_name} --file ${cluster_config_file} -v 10
+created="false"
+i="0"
+
+while [[ ${created} == "false" && ${i} != "5" ]]; do
+    failed="false"
+    tanzu standalone-cluster create ${guest_cluster_name} --file "${cluster_config_file}" -v 10 || failed="true"
+    if [[ ${failed} == "false" ]]; then
+        created="true"
+    fi
+    i=$(expr $i + 1)
+done
 
 "${MY_DIR}"/check-tce-cluster-creation.sh ${guest_cluster_name}-admin@${guest_cluster_name}
 
