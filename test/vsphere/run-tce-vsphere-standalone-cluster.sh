@@ -51,13 +51,13 @@ rm -rfv ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 printenv 'JUMPER_SSH_PRIVATE_KEY' > ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 chmod 400 ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 
-sshuttle --verbose --remote ${JUMPER_SSH_HOST_NAME} "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 &
-sshuttle_pid=${!}
+# sshuttle --no-latency-control -vvvvvvvv --remote ${JUMPER_SSH_HOST_NAME} "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 &
+# sshuttle_pid=${!}
 
-trap '{ kill ${sshuttle_pid}; }' EXIT
+# trap '{ kill ${sshuttle_pid}; }' EXIT
 
 # wait for sshuttle to do it's work - ssh to jumper host, handling local networking config etc
-sleep 10
+# sleep 10
 
 cluster_config_file_template="${MY_DIR}"/standalone-cluster-template.yaml
 
@@ -67,18 +67,9 @@ cluster_config_file="${vsphere_temp_dir}"/standalone-cluster.yaml
 
 envsubst < "${cluster_config_file_template}" > "${cluster_config_file}"
 
-created="false"
-i="0"
+tanzu standalone-cluster create ${guest_cluster_name} --file "${cluster_config_file}" -v 10 || failed="true"
 
-while [[ ${created} == "false" && ${i} != "5" ]]; do
-    failed="false"
-    tanzu standalone-cluster create ${guest_cluster_name} --file "${cluster_config_file}" -v 10 || failed="true"
-    if [[ ${failed} == "false" ]]; then
-        created="true"
-    fi
-    i=$(expr $i + 1)
-done
-
-"${MY_DIR}"/check-tce-cluster-creation.sh ${guest_cluster_name}-admin@${guest_cluster_name}
+# TODO: Move check script from docker to the parent directory to be used commonly :)
+"${MY_DIR}"/../capd/check-tce-cluster-creation.sh ${guest_cluster_name}-admin@${guest_cluster_name}
 
 tanzu standalone-cluster delete ${guest_cluster_name} -y
