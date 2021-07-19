@@ -66,6 +66,6 @@ envsubst < "${cluster_config_file_template}" > "${cluster_config_file}"
 tanzu standalone-cluster create ${guest_cluster_name} --file "${cluster_config_file}" -v 10 || failed="true"
 
 # TODO: Move check script from docker to the parent directory to be used commonly :)
-"${MY_DIR}"/../capd/check-tce-cluster-creation.sh ${guest_cluster_name}-admin@${guest_cluster_name}
+"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${guest_cluster_name}-admin@${guest_cluster_name}
 
 tanzu standalone-cluster delete ${guest_cluster_name} -y
