@@ -51,13 +51,9 @@ rm -rfv ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 printenv 'JUMPER_SSH_PRIVATE_KEY' > ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 chmod 400 ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
 
-# sshuttle --no-latency-control -vvvvvvvv --remote ${JUMPER_SSH_HOST_NAME} "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 &
-# sshuttle_pid=${!}
+sshuttle --daemon -vvvvvvvv --remote ${JUMPER_SSH_HOST_NAME} "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
-# trap '{ kill ${sshuttle_pid}; }' EXIT
-
-# wait for sshuttle to do it's work - ssh to jumper host, handling local networking config etc
-# sleep 10
+trap '{ kill $(cat ./sshuttle.pid); }' EXIT
 
 cluster_config_file_template="${MY_DIR}"/standalone-cluster-template.yaml
 
