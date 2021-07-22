@@ -38,7 +38,8 @@ declare -a required_env_vars=("VSPHERE_CONTROL_PLANE_ENDPOINT"
 
 for env_var in "${required_env_vars[@]}"
 do
-    if [ -z "${env_var}" ]; then
+    size_of_env_var_value=$(printenv "${env_var}" | wc -c)
+    if [ size_of_env_var_value != "0" ]; then
         echo "Environment variable ${env_var} is empty! It's a required environment variable, please set it"
         exit 1
     fi
