@@ -6,7 +6,7 @@
 set -e
 set -x
 
-# Note: This is WIP and supports only Linux(Debian/Ubuntu) and MacOS
+# Note: This script supports only Linux(Debian/Ubuntu) and MacOS
 # Following environment variables are expected to be exported before running the script
 # VSPHERE_CONTROL_PLANE_ENDPOINT - virtual and static IP for the cluster's control plane nodes
 # VSPHERE_SERVER - private IP of the vcenter server
@@ -21,6 +21,28 @@ set -x
 # JUMPER_SSH_HOST_IP - public IP address to access the Jumper host for SSH
 # JUMPER_SSH_USERNAME - username to access the Jumper host for SSH
 # JUMPER_SSH_PRIVATE_KEY - private key to access to access the Jumper host for SSH
+
+declare -a required_env_vars=("VSPHERE_CONTROL_PLANE_ENDPOINT"
+"VSPHERE_SERVER"
+"VSPHERE_SSH_AUTHORIZED_KEY"
+"VSPHERE_USERNAME"
+"VSPHERE_PASSWORD"
+"VSPHERE_DATACENTER"
+"VSPHERE_DATASTORE"
+"VSPHERE_FOLDER"
+"VSPHERE_NETWORK"
+"VSPHERE_RESOURCE_POOL"
+"JUMPER_SSH_HOST_IP"
+"JUMPER_SSH_USERNAME"
+"JUMPER_SSH_PRIVATE_KEY")
+
+for env_var in "${required_env_vars[@]}"
+do
+    if [ -z "${env_var}" ]; then
+        echo "Environment variable ${env_var} is empty! It's a required environment variable, please set it"
+        exit 1
+    fi
+done
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
