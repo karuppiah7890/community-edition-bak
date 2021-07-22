@@ -54,8 +54,8 @@ guest_cluster_name="guest-cluster-${RANDOM}"
 
 export CLUSTER_NAME="$guest_cluster_name"
 
-export JUMPER_SSH_HOST_NAME=vmc-jumper-${guest_cluster_name}
-export JUMPER_SSH_PRIVATE_KEY_LOCATION=~/.ssh/jumper_private_key
+jumper_ssh_host_name=vmc-jumper-${guest_cluster_name}
+jumper_ssh_private_key_location=~/.ssh/jumper_private_key
 
 ssh_config_file_template="${MY_DIR}"/ssh-config-template
 
@@ -66,14 +66,14 @@ touch ${ssh_config_file}
 
 envsubst < "${ssh_config_file_template}" >> ${ssh_config_file}
 
-mkdir -p "$(dirname ${JUMPER_SSH_PRIVATE_KEY_LOCATION})"
-touch ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
+mkdir -p "$(dirname ${jumper_ssh_private_key_location})"
+touch ${jumper_ssh_private_key_location}
 
-rm -rfv ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
-printenv 'JUMPER_SSH_PRIVATE_KEY' > ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
-chmod 400 ${JUMPER_SSH_PRIVATE_KEY_LOCATION}
+rm -rfv ${jumper_ssh_private_key_location}
+printenv 'JUMPER_SSH_PRIVATE_KEY' > ${jumper_ssh_private_key_location}
+chmod 400 ${jumper_ssh_private_key_location}
 
-sshuttle --daemon -vvvvvvvv --remote ${JUMPER_SSH_HOST_NAME} "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
+sshuttle --daemon -vvvvvvvv --remote ${jumper_ssh_host_name} "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
 trap '{ kill $(cat ./sshuttle.pid); }' EXIT
 
