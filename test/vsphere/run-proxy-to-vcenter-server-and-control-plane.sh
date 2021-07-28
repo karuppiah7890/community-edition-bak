@@ -37,4 +37,6 @@ rm -rfv "${JUMPER_SSH_PRIVATE_KEY_LOCATION}"
 printenv 'JUMPER_SSH_PRIVATE_KEY' > "${JUMPER_SSH_PRIVATE_KEY_LOCATION}"
 chmod 400 "${JUMPER_SSH_PRIVATE_KEY_LOCATION}"
 
+trap '{ cat /var/log/syslog; }' EXIT
+
 sshuttle --daemon -vvvvvvvv --remote "${JUMPER_SSH_HOST_NAME}" "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
