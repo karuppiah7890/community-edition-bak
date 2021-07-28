@@ -15,8 +15,9 @@ if [[ -z "$(command -v sshuttle)" ]]; then
         distro_id=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
 
         if [[ "${distro_id}" == "ubuntu" || "${distro_id}" == "debian" ]]; then
-            sudo apt-get install sshuttle --yes
-            sshuttle --version
+            virtualenv -p python3 /tmp/sshuttle
+            . /tmp/sshuttle/bin/activate
+            pip install sshuttle
         else
             echo "${installation_error_message}"
             echo "Exiting..."
