@@ -16,6 +16,7 @@ if [[ -z "$(command -v sshuttle)" ]]; then
 
         if [[ "${distro_id}" == "ubuntu" || "${distro_id}" == "debian" ]]; then
             sudo apt-get install sshuttle --yes
+            sshuttle --version
         else
             echo "${installation_error_message}"
             echo "Exiting..."
@@ -23,6 +24,7 @@ if [[ -z "$(command -v sshuttle)" ]]; then
         fi
     elif [[ "$build_os" == "Darwin" ]]; then
         brew install sshuttle
+        sshuttle --version
     else
         echo "${installation_error_message}"
         echo "Exiting..."
