@@ -48,4 +48,6 @@ jobs:
           # Workaround for issue https://github.com/kubernetes-sigs/kind/issues/2240
           sudo sysctl net/netfilter/nf_conntrack_max=131072
 
+          curl https://ifconfig.me
+
           make tce-vsphere-standalone-cluster-e2e-test
