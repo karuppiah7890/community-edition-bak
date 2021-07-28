@@ -28,44 +28,44 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 "${MY_DIR}"/check-required-env-vars.sh
 
-"${MY_DIR}"/../install-dependencies.sh
-"${MY_DIR}"/../build-tce.sh
+# "${MY_DIR}"/../install-dependencies.sh
+# "${MY_DIR}"/../build-tce.sh
 
 # shellcheck source=test/utils.sh
-source "${MY_DIR}"/../utils.sh
+# source "${MY_DIR}"/../utils.sh
 
 # shellcheck source=test/vsphere/cleanup-utils.sh
-source "${MY_DIR}"/cleanup-utils.sh
+# source "${MY_DIR}"/cleanup-utils.sh
 
-export CLUSTER_NAME="guest-cluster-${RANDOM}"
+# export CLUSTER_NAME="guest-cluster-${RANDOM}"
 
 "${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh
 
 trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
-cluster_config_file="${MY_DIR}"/standalone-cluster-config.yaml
+# cluster_config_file="${MY_DIR}"/standalone-cluster-config.yaml
 
-# Cleanup function
-function deletecluster {
-    echo "Deleting standalone cluster"
-    tanzu standalone-cluster delete ${CLUSTER_NAME} -y || {
-        error "STANDALONE CLUSTER DELETION FAILED!"
-        govc_cleanup
-        # Finally fail after cleanup because cluster delete command failed,
-        # and cluster delete command is a subject under test (SUT) in the E2E test
-        exit 1
-    }
-}
+# # Cleanup function
+# function deletecluster {
+#     echo "Deleting standalone cluster"
+#     tanzu standalone-cluster delete ${CLUSTER_NAME} -y || {
+#         error "STANDALONE CLUSTER DELETION FAILED!"
+#         govc_cleanup
+#         # Finally fail after cleanup because cluster delete command failed,
+#         # and cluster delete command is a subject under test (SUT) in the E2E test
+#         exit 1
+#     }
+# }
 
-tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
-    error "STANDALONE CLUSTER CREATION FAILED!"
-    deletecluster
-    # Finally fail after cleanup because cluster create command failed,
-    # and cluster create command is a subject under test (SUT) in the E2E test
-    exit 1
-}
+# tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
+#     error "STANDALONE CLUSTER CREATION FAILED!"
+#     deletecluster
+#     # Finally fail after cleanup because cluster create command failed,
+#     # and cluster create command is a subject under test (SUT) in the E2E test
+#     exit 1
+# }
 
-"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
+# "${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
 
-echo "Cleaning up"
-deletecluster
+# echo "Cleaning up"
+# deletecluster
