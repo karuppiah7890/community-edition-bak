@@ -41,7 +41,7 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 "${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh
 
-curl -i -v -k ${VSPHERE_SERVER}/ui
+curl -i -v -k https://${VSPHERE_SERVER}/ui
 
 trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
