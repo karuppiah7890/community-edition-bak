@@ -48,4 +48,4 @@ trap '{ cat /var/log/syslog; }' EXIT
 
 sshuttle --daemon -vvvvvvvv --remote "${JUMPER_SSH_HOST_NAME}" "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
-curl --max-time 10 -i -v -k https://${VSPHERE_SERVER}/ui
+# curl --max-time 10 -i -v -k https://${VSPHERE_SERVER}/ui
