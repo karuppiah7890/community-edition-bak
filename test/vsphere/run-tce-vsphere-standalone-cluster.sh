@@ -41,7 +41,7 @@ export CLUSTER_NAME="guest-cluster-${RANDOM}"
 
 "${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh
 
-trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
+trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; cat /var/log/syslog; }' EXIT
 
 cluster_config_file="${MY_DIR}"/standalone-cluster-config.yaml
 
