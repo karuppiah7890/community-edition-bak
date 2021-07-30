@@ -1,8 +1,9 @@
 name: TCE vSphere Standalone Cluster E2E Test
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  push:
+    branches:
+      - fix-vsphere-automation-trial
 
 jobs:
   tce-vsphere-e2e-test:
