@@ -146,6 +146,8 @@ do
 
     kubectl describe clusters -A
 
+    kubectl describe vsphereclusters -A
+
     print_system_resources
 done
 
