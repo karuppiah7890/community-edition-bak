@@ -29,4 +29,4 @@ chmod +x "${INSTALLATION_DIR}"/fetch
 
 tar xzvf "${INSTALLATION_DIR}"/${TCE_RELEASE_TAR_BALL} --directory="${INSTALLATION_DIR}"
 
-./"${INSTALLATION_DIR}"/${TCE_RELEASE_DIR}/install.sh
+"${INSTALLATION_DIR}"/${TCE_RELEASE_DIR}/install.sh
