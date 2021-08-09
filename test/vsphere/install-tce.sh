@@ -8,9 +8,10 @@ set -x
 
 # TODO: Use "make release" and install TCE, instead of using TCE GitHub releases
 
-TCE_VERSION="v0.6.0"
-TCE_RELEASE_TAR_BALL="tce-linux-amd64-${TCE_VERSION}.tar.gz"
-TCE_RELEASE_DIR="tce-linux-amd64-${TCE_VERSION}"
+TCE_RELEASE_TAG="v0.7.0-rc.1-karuppiah"
+TCE_DUMMY_VERSION="v0.7.0-dev.2-karuppiah"
+TCE_RELEASE_TAR_BALL="tce-linux-amd64-${TCE_DUMMY_VERSION}.tar.gz"
+TCE_RELEASE_DIR="tce-linux-amd64-${TCE_DUMMY_VERSION}"
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 INSTALLATION_DIR="${MY_DIR}/tce-installation"
 
@@ -20,8 +21,8 @@ curl -L https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_lin
 
 chmod +x "${INSTALLATION_DIR}"/fetch
 
-"${INSTALLATION_DIR}"/fetch --repo "https://github.com/vmware-tanzu/tce" \
-    --tag ${TCE_VERSION} \
+"${INSTALLATION_DIR}"/fetch --repo "https://github.com/karuppiah7890/tce" \
+    --tag ${TCE_RELEASE_TAG} \
     --release-asset ${TCE_RELEASE_TAR_BALL} \
     --progress \
     --github-oauth-token ${GH_ACCESS_TOKEN} \
