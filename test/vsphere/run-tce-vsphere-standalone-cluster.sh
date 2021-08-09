@@ -60,7 +60,7 @@ function deletecluster {
 
 echo "Running debug script in the background..."
 
-"${MY_DIR}"/debug-tce-install.sh &
+"${MY_DIR}"/../debug-tce-install.sh &
 
 tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
     error "STANDALONE CLUSTER CREATION FAILED!"
