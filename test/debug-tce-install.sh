@@ -6,6 +6,8 @@
 set -e
 set -x
 
+echo "DEBUGGING TCE install :D"
+
 print_green() {
     echo -e "\033[32mCustom Debug Script: ${@}\033[39m"
 }
