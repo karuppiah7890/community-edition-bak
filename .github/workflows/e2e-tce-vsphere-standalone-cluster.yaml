@@ -50,4 +50,6 @@ jobs:
 
           curl https://ifconfig.me
 
+          mkdir -p "${HOME}/.local/share"
+
           make tce-vsphere-standalone-cluster-e2e-test
