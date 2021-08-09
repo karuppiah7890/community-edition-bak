@@ -20,7 +20,7 @@ curl -L https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_lin
 
 chmod +x "${INSTALLATION_DIR}"/fetch
 
-"${INSTALLATION_DIR}"/fetch --repo "https://github.com/vmware-tanzu/tce" \
+"${INSTALLATION_DIR}"/fetch --repo "https://github.com/karuppiah7890/tce" \
     --tag ${TCE_VERSION} \
     --release-asset ${TCE_RELEASE_TAR_BALL} \
     --progress \
