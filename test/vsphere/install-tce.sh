@@ -8,7 +8,7 @@ set -x
 
 # TODO: Use "make release" and install TCE, instead of using TCE GitHub releases
 
-TCE_VERSION="v0.7.0-rc.1"
+TCE_VERSION="v0.6.0"
 TCE_RELEASE_TAR_BALL="tce-linux-amd64-${TCE_VERSION}.tar.gz"
 TCE_RELEASE_DIR="tce-linux-amd64-${TCE_VERSION}"
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
