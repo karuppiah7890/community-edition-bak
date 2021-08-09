@@ -61,7 +61,7 @@ do
         for i in 1 2 3
         do
             kubectl wait --for=condition=ready node --all --timeout=240s || true
-            kubectl describe node | grep -i error
+            kubectl describe node | grep -i error || true
         done
     fi
 
