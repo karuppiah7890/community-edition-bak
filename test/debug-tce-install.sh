@@ -144,6 +144,8 @@ do
 
     sleep 20
 
+    kubectl describe clusters -A
+
     print_system_resources
 done
 
