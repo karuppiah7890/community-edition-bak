@@ -1,8 +1,9 @@
 name: TCE Docker Standalone Cluster E2E Test
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  push:
+    branches:
+      - fix-docker-standalone-cluster-e2e-trial
 
 jobs:
   tce-docker-e2e-test:
