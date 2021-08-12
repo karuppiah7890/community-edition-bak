@@ -33,6 +33,6 @@ jobs:
         run: |
           ./test/fetch-and-install-tce-release.sh v0.7.0-rc.3
           tanzu version
-          tanzu standlone-cluster version
+          tanzu standalone-cluster version
           echo "Running standalone cluster tests"
           make tce-docker-standalone-cluster-e2e-test
