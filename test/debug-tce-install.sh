@@ -14,9 +14,13 @@ print_green() {
 
 # Install kind
 
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
-chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
+BUILD_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+
+if [[ -z "$(command -v kind)" ]]; then
+    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-${BUILD_OS}-amd64
+    chmod +x ./kind
+    sudo mv ./kind /usr/local/bin/kind
+fi
 
 # Check if the kind bootstrap cluster is up and running
 
@@ -150,3 +154,50 @@ do
     print_system_resources
 done
 
+# Ideas for debugging -
+# for ((i=1;i<=100;i++))
+# do
+# echo ""
+# echo "#####"
+# echo "standalone logs"
+# echo "#####"
+# echo ""
+# cat /tmp/standalone.log
+# bootstrapclustername=$(kind get clusters | grep tkg) || true
+# if [[ -n $bootstrapclustername ]]; then
+#     kind get kubeconfig --name $bootstrapclustername > /tmp/bootstrap.kubeconfig || true
+#     echo ""
+#     echo "#####"
+#     echo "bootstrap resources"
+#     echo "#####"
+#     echo ""
+#     kubectl --kubeconfig /tmp/bootstrap.kubeconfig get all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
+#     echo ""
+#     echo "#####"
+#     echo "bootstrap capd logs"
+#     echo "#####"
+#     echo ""
+#     kubectl --kubeconfig /tmp/bootstrap.kubeconfig logs -l cluster.x-k8s.io/provider=infrastructure-docker -n capd-system -c manager || true
+# fi
+# container=$(docker ps | grep -e "my.*control" | awk '{ print $1}') || true
+# if [[ -n $container ]]; then
+#     echo ""
+#     echo "#####"
+#     echo "standalone cluster control plane containers"
+#     echo "#####"
+#     echo ""
+#     docker exec $container /bin/bash -c "crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock ps -a" || true
+#     echo ""
+#     echo "#####"
+#     echo "standalone cluster control plane container logs"
+#     echo "#####"
+#     echo ""
+#     docker exec $container /bin/bash -c "crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock ps -a | grep -v CONTAINER | awk '{print $1}' | xargs -n1 crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock logs -t" || true
+#     echo "#####"
+#     echo "kubelet logs"
+#     echo "#####"
+#     echo ""
+#     docker exec $container /bin/bash -c "journalctl -xeu kubelet" || true
+# fi
+# sleep 5
+# done
