@@ -143,11 +143,11 @@ do
         kubectl logs -n "${namespace}" "${name}" || true
     done
 
-    if [[ "${all_ready}" == "true" ]]; then
-        echo "All manager pods are ready"
-    else
-        echo "Some manager pods are not ready"
-    fi
+    # if [[ "${all_ready}" == "true" ]]; then
+    #     echo "All manager pods are ready"
+    # else
+    #     echo "Some manager pods are not ready"
+    # fi
 
     sleep 20
 
