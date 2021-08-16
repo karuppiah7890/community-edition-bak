@@ -14,9 +14,13 @@ print_green() {
 
 # Install kind
 
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
-chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
+BUILD_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+
+if [[ -z "$(command -v kind)" ]]; then
+    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-${BUILD_OS}-amd64
+    chmod +x ./kind
+    sudo mv ./kind /usr/local/bin/kind
+fi
 
 # Check if the kind bootstrap cluster is up and running
 
