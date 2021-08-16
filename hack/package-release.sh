@@ -30,18 +30,18 @@ TCE_BUILD_VERSION="${BUILD_VERSION:-latest}"
 DEP_BUILD_DIR="/tmp/tce-release"
 ROOT_FRAMEWORK_DIR="${DEP_BUILD_DIR}/tanzu-framework"
 
-PACKAGE_LINUX_AMD64_DIR="${BUILD_ROOT_DIR}/tce-linux-amd64-${BUILD_VERSION}"
-# PACKAGE_DARWIN_AMD64_DIR="${BUILD_ROOT_DIR}/tce-darwin-amd64-${BUILD_VERSION}"
+# PACKAGE_LINUX_AMD64_DIR="${BUILD_ROOT_DIR}/tce-linux-amd64-${BUILD_VERSION}"
+PACKAGE_DARWIN_AMD64_DIR="${BUILD_ROOT_DIR}/tce-darwin-amd64-${BUILD_VERSION}"
 # PACKAGE_WINDOWS_AMD64_DIR="${BUILD_ROOT_DIR}/tce-windows-amd64-${BUILD_VERSION}"
 
 # delete and create everything
 rm -rf "${BUILD_ROOT_DIR}"
-rm -rf "${PACKAGE_LINUX_AMD64_DIR}"
-# rm -rf "${PACKAGE_DARWIN_AMD64_DIR}"
+# rm -rf "${PACKAGE_LINUX_AMD64_DIR}"
+rm -rf "${PACKAGE_DARWIN_AMD64_DIR}"
 # rm -rf "${PACKAGE_WINDOWS_AMD64_DIR}"
 mkdir -p "${BUILD_ROOT_DIR}"
-mkdir -p "${PACKAGE_LINUX_AMD64_DIR}/bin"
-# mkdir -p "${PACKAGE_DARWIN_AMD64_DIR}/bin"
+# mkdir -p "${PACKAGE_LINUX_AMD64_DIR}/bin"
+mkdir -p "${PACKAGE_DARWIN_AMD64_DIR}/bin"
 # mkdir -p "${PACKAGE_WINDOWS_AMD64_DIR}/bin"
 
 # Common directories
@@ -51,7 +51,7 @@ ROOT_TCE_ARTIFACTS_DIR="${ROOT_REPO_DIR}/artifacts"
 
 # copy tanzu cli bits Linux AMD64
 # Tanzu bits
-cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/linux/amd64/cli/core/${FRAMEWORK_BUILD_VERSION}/tanzu-core-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu"
+# cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/linux/amd64/cli/core/${FRAMEWORK_BUILD_VERSION}/tanzu-core-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu"
 # cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/linux/amd64/cli/alpha/${FRAMEWORK_BUILD_VERSION}/tanzu-alpha-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu-plugin-alpha"
 
 # cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/linux/amd64/cli/cluster/${FRAMEWORK_BUILD_VERSION}/tanzu-cluster-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu-plugin-cluster"
@@ -65,12 +65,12 @@ cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/linux/amd64/cli/core/${FRAMEWORK_BUILD_VER
 # cp -f "${ROOT_FRAMEWORK_ARTFACTS_ADMIN_DIR}/linux/amd64/cli/test/${FRAMEWORK_BUILD_VERSION}/tanzu-test-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu-plugin-test"
 
 # TCE bits (New folder structure using tanzu-framework main)
-cp -f "${ROOT_TCE_ARTIFACTS_DIR}/standalone-cluster/${TCE_BUILD_VERSION}/tanzu-standalone-cluster-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu-plugin-standalone-cluster"
-cp -f "${ROOT_TCE_ARTIFACTS_DIR}/conformance/${TCE_BUILD_VERSION}/tanzu-conformance-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu-plugin-conformance"
+# cp -f "${ROOT_TCE_ARTIFACTS_DIR}/standalone-cluster/${TCE_BUILD_VERSION}/tanzu-standalone-cluster-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu-plugin-standalone-cluster"
+# cp -f "${ROOT_TCE_ARTIFACTS_DIR}/conformance/${TCE_BUILD_VERSION}/tanzu-conformance-linux_amd64" "${PACKAGE_LINUX_AMD64_DIR}/bin/tanzu-plugin-conformance"
 
 # copy tanzu cli bits Darwin AMD64
 # Tanzu bits
-# cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/core/${FRAMEWORK_BUILD_VERSION}/tanzu-core-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/core/${FRAMEWORK_BUILD_VERSION}/tanzu-core-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu"
 # # cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/alpha/${FRAMEWORK_BUILD_VERSION}/tanzu-alpha-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-alpha"
 # cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/cluster/${FRAMEWORK_BUILD_VERSION}/tanzu-cluster-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-cluster"
 # cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/kubernetes-release/${FRAMEWORK_BUILD_VERSION}/tanzu-kubernetes-release-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-kubernetes-release"
@@ -82,9 +82,9 @@ cp -f "${ROOT_TCE_ARTIFACTS_DIR}/conformance/${TCE_BUILD_VERSION}/tanzu-conforma
 # cp -f "${ROOT_FRAMEWORK_ARTFACTS_ADMIN_DIR}/darwin/amd64/cli/builder/${FRAMEWORK_BUILD_VERSION}/tanzu-builder-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-builder"
 # cp -f "${ROOT_FRAMEWORK_ARTFACTS_ADMIN_DIR}/darwin/amd64/cli/test/${FRAMEWORK_BUILD_VERSION}/tanzu-test-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-test"
 
-# TCE bits (New folder structure using tanzu-framwork main)
-# cp -f "${ROOT_TCE_ARTIFACTS_DIR}/standalone-cluster/${TCE_BUILD_VERSION}/tanzu-standalone-cluster-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-standalone-cluster"
-# cp -f "${ROOT_TCE_ARTIFACTS_DIR}/conformance/${TCE_BUILD_VERSION}/tanzu-conformance-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-conformance"
+# TCE bits (New folder structure using tanzu-framework main)
+cp -f "${ROOT_TCE_ARTIFACTS_DIR}/standalone-cluster/${TCE_BUILD_VERSION}/tanzu-standalone-cluster-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-standalone-cluster"
+cp -f "${ROOT_TCE_ARTIFACTS_DIR}/conformance/${TCE_BUILD_VERSION}/tanzu-conformance-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-conformance"
 
 
 # copy tanzu cli bits Windows AMD64
@@ -107,14 +107,14 @@ cp -f "${ROOT_TCE_ARTIFACTS_DIR}/conformance/${TCE_BUILD_VERSION}/tanzu-conforma
 
 # change settings
 chmod +x "${ROOT_REPO_DIR}/hack/install.sh"
-cp -f "${ROOT_REPO_DIR}/hack/install.sh" "${PACKAGE_LINUX_AMD64_DIR}"
-cp -f "${ROOT_REPO_DIR}/hack/uninstall.sh" "${PACKAGE_LINUX_AMD64_DIR}"
-# cp -f "${ROOT_REPO_DIR}/hack/install.sh" "${PACKAGE_DARWIN_AMD64_DIR}"
-# cp -f "${ROOT_REPO_DIR}/hack/uninstall.sh" "${PACKAGE_DARWIN_AMD64_DIR}"
+# cp -f "${ROOT_REPO_DIR}/hack/install.sh" "${PACKAGE_LINUX_AMD64_DIR}"
+# cp -f "${ROOT_REPO_DIR}/hack/uninstall.sh" "${PACKAGE_LINUX_AMD64_DIR}"
+cp -f "${ROOT_REPO_DIR}/hack/install.sh" "${PACKAGE_DARWIN_AMD64_DIR}"
+cp -f "${ROOT_REPO_DIR}/hack/uninstall.sh" "${PACKAGE_DARWIN_AMD64_DIR}"
 # cp -f "${ROOT_REPO_DIR}/hack/install.bat" "${PACKAGE_WINDOWS_AMD64_DIR}"
 # cp -f "${ROOT_REPO_DIR}/hack/uninstall.bat" "${PACKAGE_WINDOWS_AMD64_DIR}"
-chown -R "$USER":"$(id -g -n "$USER")" "${PACKAGE_LINUX_AMD64_DIR}"
-# chown -R "$USER":"$(id -g -n "$USER")" "${PACKAGE_DARWIN_AMD64_DIR}"
+# chown -R "$USER":"$(id -g -n "$USER")" "${PACKAGE_LINUX_AMD64_DIR}"
+chown -R "$USER":"$(id -g -n "$USER")" "${PACKAGE_DARWIN_AMD64_DIR}"
 # chown -R "$USER":"$(id -g -n "$USER")" "${PACKAGE_WINDOWS_AMD64_DIR}"
 
 # packaging
