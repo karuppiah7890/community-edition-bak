@@ -155,6 +155,9 @@ do
 done
 
 # Ideas for debugging -
+
+# CLUSTER_PLAN=dev CLUSTER_NAME=my-cluster tanzu standalone-cluster create my-cluster -i docker -v 10 &> /tmp/standalone.log &
+# pid=$!
 # for ((i=1;i<=100;i++))
 # do
 # echo ""
@@ -201,3 +204,4 @@ done
 # fi
 # sleep 5
 # done
+# kill $pid
