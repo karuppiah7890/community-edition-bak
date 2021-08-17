@@ -56,6 +56,7 @@ fi
 # build and install all "tanzu-framework" CLI plugins
 # (e.g. management-cluster, cluster, etc)
 # BUILD_SHA=${BUILD_SHA} BUILD_VERSION=${FRAMEWORK_BUILD_VERSION} make build-install-cli-all ENVS=linux-amd64
+BUILD_SHA=${BUILD_SHA} BUILD_VERSION=${FRAMEWORK_BUILD_VERSION} make build-install-cli-all
 
 make clean-catalog-cache
 make clean-cli-plugins

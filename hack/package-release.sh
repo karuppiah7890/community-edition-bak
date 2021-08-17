@@ -71,16 +71,16 @@ ROOT_TCE_ARTIFACTS_DIR="${ROOT_REPO_DIR}/artifacts"
 # copy tanzu cli bits Darwin AMD64
 # Tanzu bits
 cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/core/${FRAMEWORK_BUILD_VERSION}/tanzu-core-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu"
-# # cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/alpha/${FRAMEWORK_BUILD_VERSION}/tanzu-alpha-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-alpha"
-# cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/cluster/${FRAMEWORK_BUILD_VERSION}/tanzu-cluster-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-cluster"
-# cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/kubernetes-release/${FRAMEWORK_BUILD_VERSION}/tanzu-kubernetes-release-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-kubernetes-release"
-# cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/login/${FRAMEWORK_BUILD_VERSION}/tanzu-login-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-login"
-# cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/package/${FRAMEWORK_BUILD_VERSION}/tanzu-package-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-package"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/alpha/${FRAMEWORK_BUILD_VERSION}/tanzu-alpha-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-alpha"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/cluster/${FRAMEWORK_BUILD_VERSION}/tanzu-cluster-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-cluster"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/kubernetes-release/${FRAMEWORK_BUILD_VERSION}/tanzu-kubernetes-release-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-kubernetes-release"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/login/${FRAMEWORK_BUILD_VERSION}/tanzu-login-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-login"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/package/${FRAMEWORK_BUILD_VERSION}/tanzu-package-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-package"
 # cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/pinniped-auth/${FRAMEWORK_BUILD_VERSION}/tanzu-pinniped-auth-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-pinniped-auth"
-# cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/management-cluster/${FRAMEWORK_BUILD_VERSION}/tanzu-management-cluster-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-management-cluster"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_DIR}/darwin/amd64/cli/management-cluster/${FRAMEWORK_BUILD_VERSION}/tanzu-management-cluster-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-management-cluster"
 
-# cp -f "${ROOT_FRAMEWORK_ARTFACTS_ADMIN_DIR}/darwin/amd64/cli/builder/${FRAMEWORK_BUILD_VERSION}/tanzu-builder-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-builder"
-# cp -f "${ROOT_FRAMEWORK_ARTFACTS_ADMIN_DIR}/darwin/amd64/cli/test/${FRAMEWORK_BUILD_VERSION}/tanzu-test-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-test"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_ADMIN_DIR}/darwin/amd64/cli/builder/${FRAMEWORK_BUILD_VERSION}/tanzu-builder-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-builder"
+cp -f "${ROOT_FRAMEWORK_ARTFACTS_ADMIN_DIR}/darwin/amd64/cli/test/${FRAMEWORK_BUILD_VERSION}/tanzu-test-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-test"
 
 # TCE bits (New folder structure using tanzu-framework main)
 cp -f "${ROOT_TCE_ARTIFACTS_DIR}/standalone-cluster/${TCE_BUILD_VERSION}/tanzu-standalone-cluster-darwin_amd64" "${PACKAGE_DARWIN_AMD64_DIR}/bin/tanzu-plugin-standalone-cluster"
