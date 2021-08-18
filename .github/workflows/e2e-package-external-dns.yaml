@@ -97,8 +97,8 @@ jobs:
               echo "Running Docker containers in the host machine"
               echo "#####"
               echo ""
-            docker ps
-            docker ps -a -q | xargs docker inspect
+            docker ps || true
+            docker ps -q | xargs docker inspect || true
             container=$(docker ps | grep -e "my.*control" | awk '{ print $1}') || true
             if [[ -n $container ]]; then
               echo ""
