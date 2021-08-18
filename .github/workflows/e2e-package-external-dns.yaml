@@ -64,10 +64,12 @@ jobs:
 
       - name: Create a standlone cluster
         run: |
+          set -x
           CLUSTER_PLAN=dev CLUSTER_NAME=my-cluster tanzu standalone-cluster create my-cluster -i docker -v 10 &> /tmp/standalone.log &
           pid=$!
           docker info
           docker system info
+          export DONE="false"
           for ((i=1;i<=100;i++))
           do
             echo ""
@@ -123,6 +125,10 @@ jobs:
               docker exec $container /bin/bash -c "systemctl status kubepods.slice" || true
               docker exec $container /bin/bash -c "ls /run/systemd/transient/kubepods.slice" || true
               docker exec $container /bin/bash -c "cat /run/systemd/transient/kubepods.slice" || true
+              if [[ ${DONE} == "false" ]]; then
+                docker exec $container /bin/bash -c " echo 'ExecStopPost=/bin/bash -c \"for i in $(systemctl list-unit-files --no-legend --no-pager -l | grep --color=never -o .*.slice | grep kubepod); do systemctl stop $i; done\"' >> /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
+                export DONE="true"
+              fi
               echo ""
               echo "#####"
               echo "kubelet logs"
