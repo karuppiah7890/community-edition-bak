@@ -85,7 +85,8 @@ jobs:
               echo "#####"
               echo ""
               kubectl --kubeconfig /tmp/bootstrap.kubeconfig get all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
-              kubectl --kubeconfig /tmp/bootstrap.kubeconfig describe all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
+              # kubectl --kubeconfig /tmp/bootstrap.kubeconfig describe all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
+              kubectl --kubeconfig /tmp/bootstrap.kubeconfig describe clusters,dockerclusters,machines,dockermachines -A || true
               echo ""
               echo "#####"
               echo "bootstrap capd logs"
@@ -98,7 +99,7 @@ jobs:
               echo "#####"
               echo ""
             docker ps || true
-            docker ps -q | xargs docker inspect || true
+            # docker ps -q | xargs docker inspect || true
             container=$(docker ps | grep -e "my.*control" | awk '{ print $1}') || true
             if [[ -n $container ]]; then
               echo ""
@@ -115,20 +116,30 @@ jobs:
               docker exec $container /bin/bash -c "crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock ps -a | grep -v CONTAINER | awk '{print $1}' | xargs -n1 crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock logs -t" || true
               echo ""
               echo "#####"
+              echo "systemd unit slice file"
+              echo "#####"
+              echo ""
+              docker exec $container /bin/bash -c "systemctl list-units | grep kubepods.slice" || true
+              docker exec $container /bin/bash -c "systemctl status kubepods.slice" || true
+              docker exec $container /bin/bash -c "ls /run/systemd/transient/kubepods.slice" || true
+              docker exec $container /bin/bash -c "cat /run/systemd/transient/kubepods.slice" || true
+              echo ""
+              echo "#####"
               echo "kubelet logs"
               echo "#####"
               echo ""
               docker exec $container /bin/bash -c "journalctl -xeu kubelet"
-              echo "#####"
-              echo "Runc version"
-              echo "#####"
-              echo ""
-              docker exec $container /bin/bash -c "runc -v"
-              echo "#####"
-              echo "Linux version details"
-              echo "#####"
-              echo ""
-              docker exec $container /bin/bash -c "uname -a"
+
+              # echo "#####"
+              # echo "Runc version"
+              # echo "#####"
+              # echo ""
+              # docker exec $container /bin/bash -c "runc -v"
+              # echo "#####"
+              # echo "Linux version details"
+              # echo "#####"
+              # echo ""
+              # docker exec $container /bin/bash -c "uname -a"
             fi
             sleep 5
           done
