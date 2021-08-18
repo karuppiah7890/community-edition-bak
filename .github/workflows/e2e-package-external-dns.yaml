@@ -138,12 +138,13 @@ jobs:
               echo "systemd unit slice file"
               echo "#####"
               echo ""
+              docker exec $container /bin/bash -c "systemctl daemon-reload | grep kubepods.slice" || true
               docker exec $container /bin/bash -c "systemctl list-units | grep kubepods.slice" || true
               docker exec $container /bin/bash -c "systemctl status kubepods.slice" || true
               docker exec $container /bin/bash -c "ls /run/systemd/transient/kubepods.slice" || true
               docker exec $container /bin/bash -c "cat /run/systemd/transient/kubepods.slice" || true
               if [[ ${DONE} == "false" ]]; then
-                docker exec $container /bin/bash -c "echo 'ExecStopPost=/bin/bash -c \"for i in \$(systemctl list-unit-files --no-legend --no-pager -l | grep --color=never -o .*.slice | grep kubepod); do systemctl restart \$i; done\"' >> /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
+                docker exec $container /bin/bash -c "echo 'ExecStopPost=/bin/bash -c \"for i in \$(systemctl list-unit-files --no-legend --no-pager -l | grep --color=never -o .*.slice | grep kubepod); do systemctl stop \$i; systemctl daemon-reload; done\"' >> /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
                 docker exec $container /bin/bash -c "cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
                 export DONE="true"
               fi
