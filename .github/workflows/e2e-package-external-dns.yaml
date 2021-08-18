@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Docker system details
         run: |
+          set -x
           docker info || true
           docker system info || true
           systemctl status docker || true
@@ -26,6 +27,7 @@ jobs:
           cat /etc/systemd/system/docker.service* || true
           cat /etc/systemd/system/docker* || true
           cat /etc/systemd/system/docker.service/* || true
+          cat /lib/systemd/system/docker.service
       
       # - name: Set up Go 1.x
       #   uses: actions/setup-go@v2
