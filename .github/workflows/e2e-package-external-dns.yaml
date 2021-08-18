@@ -59,6 +59,8 @@ jobs:
         run: |
           CLUSTER_PLAN=dev CLUSTER_NAME=my-cluster tanzu standalone-cluster create my-cluster -i docker -v 10 &> /tmp/standalone.log &
           pid=$!
+          docker info
+          docker system info
           for ((i=1;i<=100;i++))
           do
             echo ""
@@ -76,6 +78,7 @@ jobs:
               echo "#####"
               echo ""
               kubectl --kubeconfig /tmp/bootstrap.kubeconfig get all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
+              kubectl --kubeconfig /tmp/bootstrap.kubeconfig describe all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
               echo ""
               echo "#####"
               echo "bootstrap capd logs"
@@ -83,6 +86,12 @@ jobs:
               echo ""
               kubectl --kubeconfig /tmp/bootstrap.kubeconfig logs -l cluster.x-k8s.io/provider=infrastructure-docker -n capd-system -c manager || true
             fi
+            echo "#####"
+              echo "Running Docker containers in the host machine"
+              echo "#####"
+              echo ""
+            docker ps
+            docker ps -a -q | xargs docker inspect
             container=$(docker ps | grep -e "my.*control" | awk '{ print $1}') || true
             if [[ -n $container ]]; then
               echo ""
@@ -103,6 +112,16 @@ jobs:
               echo "#####"
               echo ""
               docker exec $container /bin/bash -c "journalctl -xeu kubelet"
+              echo "#####"
+              echo "Runc version"
+              echo "#####"
+              echo ""
+              docker exec $container /bin/bash -c "runc -v"
+              echo "#####"
+              echo "Linux version details"
+              echo "#####"
+              echo ""
+              docker exec $container /bin/bash -c "uname -a"
             fi
             sleep 5
           done
