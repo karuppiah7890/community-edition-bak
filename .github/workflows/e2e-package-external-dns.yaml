@@ -12,169 +12,184 @@ jobs:
     name: TCE E2E ExternalDNS Package (Docker)
     runs-on: ubuntu-18.04
     steps:
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v2
-        with:
-          go-version: "1.16"
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v1
-
-      # - name: Cleaning up Github Actions runner
-      #   run: |
-      #     df -h
-      #     sudo rm -rf /usr/local/lib/android
-      #     sudo rm -rf /usr/share/dotnet
-      #     sudo rm -rf "/usr/local/share/boost"
-      #     df -h
-
-      - name: Install depenedencies
+      - name: Docker system details
         run: |
-          ./test/install-dependencies.sh
-
-      - name: Install TCE
-        env:
-          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-        run: |
-          ./test/fetch-and-install-tce-release.sh v0.7.0-dev.18082021-karuppiah
-          tanzu standalone-cluster version
-
-      # - name: Build TCE
-      #   env:
-      #     GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-      #   run: |
-      #     ./test/build-tce.sh
-
-      # - name: Archive TCE artifacts
-      #   uses: actions/upload-artifact@v2
+          docker info || true
+          docker system info || true
+          systemctl status docker || true
+          ls /etc || true
+          ls /etc/systemd/ || true
+          ls /etc/systemd/system/ || true
+          ls /etc/systemd/system/docker.service.d || true
+          cat /etc/systemd/system/docker.service.d/* || true
+          ls /etc/systemd/system/docker.service || true
+          cat /etc/systemd/system/docker.service* || true
+          cat /etc/systemd/system/docker* || true
+          cat /etc/systemd/system/docker.service/* || true
+      
+      # - name: Set up Go 1.x
+      #   uses: actions/setup-go@v2
       #   with:
-      #     name: tce-build-dir
-      #     path: |
-      #       build
+      #     go-version: "1.16"
+      #   id: go
 
-      - name: Apply conntrack workaround
-        run: |
-          # Workaround for issue https://github.com/kubernetes-sigs/kind/issues/2240
-          cat /etc/os-release
-          uname -r
-          sudo sysctl net/netfilter/nf_conntrack_max
-          sudo sysctl net/netfilter/nf_conntrack_max=131072
-          sudo sysctl net/netfilter/nf_conntrack_max
+      # - name: Check out code into the Go module directory
+      #   uses: actions/checkout@v1
 
-      - name: Create a standlone cluster
-        run: |
-          set -x
-          CLUSTER_PLAN=dev CLUSTER_NAME=my-cluster tanzu standalone-cluster create my-cluster -i docker -v 10 &> /tmp/standalone.log &
-          pid=$!
-          docker info
-          docker system info
-          export DONE="false"
-          for ((i=1;i<=100;i++))
-          do
-            echo ""
-            echo "#####"
-            echo "standalone logs"
-            echo "#####"
-            echo ""
-            cat /tmp/standalone.log
-            bootstrapclustername=$(kind get clusters | grep tkg) || true
-            if [[ -n $bootstrapclustername ]]; then
-              kind get kubeconfig --name $bootstrapclustername > /tmp/bootstrap.kubeconfig || true
-              echo ""
-              echo "#####"
-              echo "bootstrap resources"
-              echo "#####"
-              echo ""
-              kubectl --kubeconfig /tmp/bootstrap.kubeconfig get all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
-              # kubectl --kubeconfig /tmp/bootstrap.kubeconfig describe all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
-              kubectl --kubeconfig /tmp/bootstrap.kubeconfig describe clusters,dockerclusters,machines,dockermachines -A || true
-              echo ""
-              echo "#####"
-              echo "bootstrap capd logs"
-              echo "#####"
-              echo ""
-              kubectl --kubeconfig /tmp/bootstrap.kubeconfig logs -l cluster.x-k8s.io/provider=infrastructure-docker -n capd-system -c manager || true
-            fi
-            echo "#####"
-              echo "Running Docker containers in the host machine"
-              echo "#####"
-              echo ""
-            docker ps || true
-            # docker ps -q | xargs docker inspect || true
-            container=$(docker ps | grep -e "my.*control" | awk '{ print $1}') || true
-            if [[ -n $container ]]; then
-              echo ""
-              echo "#####"
-              echo "standalone cluster control plane containers"
-              echo "#####"
-              echo ""
-              docker exec $container /bin/bash -c "crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock ps -a" || true
-              echo ""
-              echo "#####"
-              echo "standalone cluster control plane container logs"
-              echo "#####"
-              echo ""
-              docker exec $container /bin/bash -c "crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock ps -a | grep -v CONTAINER | awk '{print $1}' | xargs -n1 crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock logs -t" || true
-              echo ""
-              echo "#####"
-              echo "systemd unit slice file"
-              echo "#####"
-              echo ""
-              docker exec $container /bin/bash -c "systemctl list-units | grep kubepods.slice" || true
-              docker exec $container /bin/bash -c "systemctl status kubepods.slice" || true
-              docker exec $container /bin/bash -c "ls /run/systemd/transient/kubepods.slice" || true
-              docker exec $container /bin/bash -c "cat /run/systemd/transient/kubepods.slice" || true
-              if [[ ${DONE} == "false" ]]; then
-                docker exec $container /bin/bash -c "echo 'ExecStopPost=/bin/bash -c \"for i in \$(systemctl list-unit-files --no-legend --no-pager -l | grep --color=never -o .*.slice | grep kubepod); do systemctl stop \$i; done\"' >> /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
-                docker exec $container /bin/bash -c "cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
-                export DONE="true"
-              fi
-              echo ""
-              echo "#####"
-              echo "kubelet logs"
-              echo "#####"
-              echo ""
-              docker exec $container /bin/bash -c "journalctl -xeu kubelet"
+      # # - name: Cleaning up Github Actions runner
+      # #   run: |
+      # #     df -h
+      # #     sudo rm -rf /usr/local/lib/android
+      # #     sudo rm -rf /usr/share/dotnet
+      # #     sudo rm -rf "/usr/local/share/boost"
+      # #     df -h
 
-              # echo "#####"
-              # echo "Runc version"
-              # echo "#####"
-              # echo ""
-              # docker exec $container /bin/bash -c "runc -v"
-              # echo "#####"
-              # echo "Linux version details"
-              # echo "#####"
-              # echo ""
-              # docker exec $container /bin/bash -c "uname -a"
-            fi
-            sleep 5
-          done
-          kill $pid
+      # - name: Install dependencies
+      #   run: |
+      #     ./test/install-dependencies.sh
 
-      # - name: Install and configure metallb
+      # - name: Install TCE
       #   env:
       #     GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
       #   run: |
-      #     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
-      #     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
-      #     cat <<EOF | kubectl apply -f -
-      #     ---
-      #     apiVersion: v1
-      #     kind: ConfigMap
-      #     metadata:
-      #       namespace: metallb-system
-      #       name: config
-      #     data:
-      #       config: |
-      #         address-pools:
-      #         - name: default
-      #           protocol: layer2
-      #           addresses:
-      #           - 172.18.0.240-172.18.0.250
-      #     EOF
+      #     ./test/fetch-and-install-tce-release.sh v0.7.0-dev.18082021-karuppiah
+      #     tanzu standalone-cluster version
 
-      # - name: Run external-dns e2e test
+      # # - name: Build TCE
+      # #   env:
+      # #     GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+      # #   run: |
+      # #     ./test/build-tce.sh
+
+      # # - name: Archive TCE artifacts
+      # #   uses: actions/upload-artifact@v2
+      # #   with:
+      # #     name: tce-build-dir
+      # #     path: |
+      # #       build
+
+      # - name: Apply conntrack workaround
       #   run: |
-      #     cd ./addons/packages/external-dns/test/e2e
-      #     ginkgo -v .
+      #     # Workaround for issue https://github.com/kubernetes-sigs/kind/issues/2240
+      #     cat /etc/os-release
+      #     uname -r
+      #     sudo sysctl net/netfilter/nf_conntrack_max
+      #     sudo sysctl net/netfilter/nf_conntrack_max=131072
+      #     sudo sysctl net/netfilter/nf_conntrack_max
+
+      # - name: Create a standlone cluster
+      #   run: |
+      #     set -x
+      #     CLUSTER_PLAN=dev CLUSTER_NAME=my-cluster tanzu standalone-cluster create my-cluster -i docker -v 10 &> /tmp/standalone.log &
+      #     pid=$!
+      #     docker info
+      #     docker system info
+      #     export DONE="false"
+      #     for ((i=1;i<=100;i++))
+      #     do
+      #       echo ""
+      #       echo "#####"
+      #       echo "standalone logs"
+      #       echo "#####"
+      #       echo ""
+      #       cat /tmp/standalone.log
+      #       bootstrapclustername=$(kind get clusters | grep tkg) || true
+      #       if [[ -n $bootstrapclustername ]]; then
+      #         kind get kubeconfig --name $bootstrapclustername > /tmp/bootstrap.kubeconfig || true
+      #         echo ""
+      #         echo "#####"
+      #         echo "bootstrap resources"
+      #         echo "#####"
+      #         echo ""
+      #         kubectl --kubeconfig /tmp/bootstrap.kubeconfig get all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
+      #         # kubectl --kubeconfig /tmp/bootstrap.kubeconfig describe all,clusters,dockerclusters,machines,dockermachines,dockermachinetemplates,dockermachinepools,machinedeployments,machinehealthchecks,machinepools,machinesets -A || true
+      #         kubectl --kubeconfig /tmp/bootstrap.kubeconfig describe clusters,dockerclusters,machines,dockermachines -A || true
+      #         echo ""
+      #         echo "#####"
+      #         echo "bootstrap capd logs"
+      #         echo "#####"
+      #         echo ""
+      #         kubectl --kubeconfig /tmp/bootstrap.kubeconfig logs -l cluster.x-k8s.io/provider=infrastructure-docker -n capd-system -c manager || true
+      #       fi
+      #       echo "#####"
+      #         echo "Running Docker containers in the host machine"
+      #         echo "#####"
+      #         echo ""
+      #       docker ps || true
+      #       # docker ps -q | xargs docker inspect || true
+      #       container=$(docker ps | grep -e "my.*control" | awk '{ print $1}') || true
+      #       if [[ -n $container ]]; then
+      #         echo ""
+      #         echo "#####"
+      #         echo "standalone cluster control plane containers"
+      #         echo "#####"
+      #         echo ""
+      #         docker exec $container /bin/bash -c "crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock ps -a" || true
+      #         echo ""
+      #         echo "#####"
+      #         echo "standalone cluster control plane container logs"
+      #         echo "#####"
+      #         echo ""
+      #         docker exec $container /bin/bash -c "crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock ps -a | grep -v CONTAINER | awk '{print $1}' | xargs -n1 crictl --runtime-endpoint unix:////var/run/containerd/containerd.sock logs -t" || true
+      #         echo ""
+      #         echo "#####"
+      #         echo "systemd unit slice file"
+      #         echo "#####"
+      #         echo ""
+      #         docker exec $container /bin/bash -c "systemctl list-units | grep kubepods.slice" || true
+      #         docker exec $container /bin/bash -c "systemctl status kubepods.slice" || true
+      #         docker exec $container /bin/bash -c "ls /run/systemd/transient/kubepods.slice" || true
+      #         docker exec $container /bin/bash -c "cat /run/systemd/transient/kubepods.slice" || true
+      #         if [[ ${DONE} == "false" ]]; then
+      #           docker exec $container /bin/bash -c "echo 'ExecStopPost=/bin/bash -c \"for i in \$(systemctl list-unit-files --no-legend --no-pager -l | grep --color=never -o .*.slice | grep kubepod); do systemctl restart \$i; done\"' >> /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
+      #           docker exec $container /bin/bash -c "cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
+      #           export DONE="true"
+      #         fi
+      #         echo ""
+      #         echo "#####"
+      #         echo "kubelet logs"
+      #         echo "#####"
+      #         echo ""
+      #         docker exec $container /bin/bash -c "journalctl -xeu kubelet"
+
+      #         # echo "#####"
+      #         # echo "Runc version"
+      #         # echo "#####"
+      #         # echo ""
+      #         # docker exec $container /bin/bash -c "runc -v"
+      #         # echo "#####"
+      #         # echo "Linux version details"
+      #         # echo "#####"
+      #         # echo ""
+      #         # docker exec $container /bin/bash -c "uname -a"
+      #       fi
+      #       sleep 5
+      #     done
+      #     kill $pid
+
+      # # - name: Install and configure metallb
+      # #   env:
+      # #     GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+      # #   run: |
+      # #     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/namespace.yaml
+      # #     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.2/manifests/metallb.yaml
+      # #     cat <<EOF | kubectl apply -f -
+      # #     ---
+      # #     apiVersion: v1
+      # #     kind: ConfigMap
+      # #     metadata:
+      # #       namespace: metallb-system
+      # #       name: config
+      # #     data:
+      # #       config: |
+      # #         address-pools:
+      # #         - name: default
+      # #           protocol: layer2
+      # #           addresses:
+      # #           - 172.18.0.240-172.18.0.250
+      # #     EOF
+
+      # # - name: Run external-dns e2e test
+      # #   run: |
+      # #     cd ./addons/packages/external-dns/test/e2e
+      # #     ginkgo -v .
