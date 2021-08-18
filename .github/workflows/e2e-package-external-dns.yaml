@@ -5,7 +5,7 @@ name: External DNS package E2E Test
 on:
   push:
     branches:
-      - fix-docker-standalone-cluster-e2e-trial
+      - blah
 
 jobs:
   tce-e2e-external-dns-package-docker:
