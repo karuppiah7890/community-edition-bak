@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 set -e
+set -x
 
 # Helper functions
 function error {
@@ -48,6 +49,8 @@ if [[ -z "$(command -v fetch)" ]]; then
     chmod +x "${INSTALLATION_DIR}"/fetch
     sudo install "${INSTALLATION_DIR}"/fetch /usr/local/bin/fetch
 fi
+
+fetch -v
 
 fetch --repo "https://github.com/vmware-tanzu/tce" \
     --tag "${TCE_VERSION}" \
