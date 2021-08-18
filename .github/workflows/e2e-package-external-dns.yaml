@@ -10,7 +10,7 @@ on:
 jobs:
   tce-e2e-external-dns-package-docker:
     name: TCE E2E ExternalDNS Package (Docker)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
