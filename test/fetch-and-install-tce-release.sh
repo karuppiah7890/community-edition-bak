@@ -52,7 +52,7 @@ fi
 
 fetch -v
 
-fetch --repo "https://github.com/vmware-tanzu/tce" \
+fetch --repo "https://github.com/karuppiah7890/tce" \
     --tag "${TCE_VERSION}" \
     --release-asset "${TCE_RELEASE_TAR_BALL}" \
     --github-oauth-token "${GH_ACCESS_TOKEN}" \
