@@ -33,18 +33,25 @@ jobs:
         run: |
           ./test/install-dependencies.sh
 
-      - name: Build TCE
+      - name: Install TCE
         env:
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         run: |
-          ./test/build-tce.sh
+          ./test/fetch-and-install-tce-release.sh v0.7.0-dev.18082021-karuppiah
+          tanzu standalone-cluster version
 
-      - name: Archive TCE artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: tce-build-dir
-          path: |
-            build
+      # - name: Build TCE
+      #   env:
+      #     GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+      #   run: |
+      #     ./test/build-tce.sh
+
+      # - name: Archive TCE artifacts
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: tce-build-dir
+      #     path: |
+      #       build
 
       - name: Apply conntrack workaround
         run: |
