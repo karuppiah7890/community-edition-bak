@@ -39,6 +39,13 @@ jobs:
         run: |
           ./test/build-tce.sh
 
+      - name: Archive TCE artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: tce-build-dir
+          path: |
+            build
+
       - name: Apply conntrack workaround
         run: |
           # Workaround for issue https://github.com/kubernetes-sigs/kind/issues/2240
