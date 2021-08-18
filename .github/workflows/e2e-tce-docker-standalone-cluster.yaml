@@ -3,7 +3,7 @@ name: TCE Docker Standalone Cluster E2E Test
 on:
   push:
     branches:
-      - fix-docker-standalone-cluster-e2e-trial
+      - blah
 
 jobs:
   tce-docker-e2e-test:
