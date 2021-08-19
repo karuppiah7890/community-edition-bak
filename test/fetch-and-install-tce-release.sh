@@ -57,5 +57,7 @@ fetch --repo "https://github.com/vmware-tanzu/tce" \
 
 tar xzvf "${INSTALLATION_DIR}"/"${TCE_RELEASE_TAR_BALL}" --directory="${INSTALLATION_DIR}"
 
+"${INSTALLATION_DIR}"/"${TCE_RELEASE_DIR}"/install.sh || { error "Unexpected failure during TCE installation"; exit 1; }
 
-"${INSTALLATION_DIR}"/"${TCE_RELEASE_DIR}"/install.sh
+echo "TCE version..."
+tanzu standalone-cluster version || { error "Unexpected failure during TCE installation"; exit 1; }
