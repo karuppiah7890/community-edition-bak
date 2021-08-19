@@ -25,6 +25,8 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 "${MY_DIR}"/../fetch-and-install-tce-release.sh v0.7.0
 
+TCE_REPO_PATH="${MY_DIR}"/../..
+
 # Set standalone cluster name
 export CLUSTER_NAME="test${RANDOM}"
 echo "Setting CLUSTER_NAME to ${CLUSTER_NAME}..."
