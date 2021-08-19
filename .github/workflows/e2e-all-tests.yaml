@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - check-aws
 
 jobs:
   e2e-test:

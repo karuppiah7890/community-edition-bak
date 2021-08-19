@@ -15,11 +15,15 @@
 # AWS_SSH_KEY_NAME
 # Region is set to us-east-2
 
-source test/build-tce.sh
+# source test/build-tce.sh
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 "${MY_DIR}"/../install-jq.sh
+
+"${MY_DIR}"/../install-dependencies.sh
+
+"${MY_DIR}"/../fetch-and-install-tce-release.sh v0.7.0
 
 # Set standalone cluster name
 export CLUSTER_NAME="test${RANDOM}"
