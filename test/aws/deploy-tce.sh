@@ -27,6 +27,9 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 TCE_REPO_PATH="${MY_DIR}"/../..
 
+export CAPI_CONTROLLER_IMAGE_TAG="v0.3.22_vmware.1"
+export KUBE_RBAC_PROXY_IMAGE_TAG="v0.8.0_vmware.1"
+
 # Set standalone cluster name
 export CLUSTER_NAME="test${RANDOM}"
 echo "Setting CLUSTER_NAME to ${CLUSTER_NAME}..."
