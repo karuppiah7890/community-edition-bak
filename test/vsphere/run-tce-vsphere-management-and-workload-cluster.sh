@@ -79,6 +79,7 @@ function cleanup_workload_cluster {
 management_cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/management-cluster-config.yaml
 
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
+export CLUSTER_NAME=${MANAGEMENT_CLUSTER_NAME}
 
 time tanzu management-cluster create ${MANAGEMENT_CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED!"
@@ -86,11 +87,15 @@ time tanzu management-cluster create ${MANAGEMENT_CLUSTER_NAME} --file "${manage
     exit 1
 }
 
+unset VSPHERE_CONTROL_PLANE_ENDPOINT
+unset CLUSTER_NAME
+
 "${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${MANAGEMENT_CLUSTER_NAME}-admin@${MANAGEMENT_CLUSTER_NAME}
 
 workload_cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/workload-cluster-config.yaml
 
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
+export CLUSTER_NAME=${WORKLOAD_CLUSTER_NAME}
 
 time tanzu cluster create ${WORKLOAD_CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
     error "WORKLOAD CLUSTER CREATION FAILED!"
@@ -98,6 +103,9 @@ time tanzu cluster create ${WORKLOAD_CLUSTER_NAME} --file "${workload_cluster_co
     cleanup_workload_cluster
     exit 1
 }
+
+unset VSPHERE_CONTROL_PLANE_ENDPOINT
+unset CLUSTER_NAME
 
 "${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${WORKLOAD_CLUSTER_NAME}-admin@${WORKLOAD_CLUSTER_NAME}
 

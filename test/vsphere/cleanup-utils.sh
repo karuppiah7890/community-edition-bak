@@ -46,9 +46,6 @@ function govc_cleanup {
 
     export GOVC_URL="${VSPHERE_USERNAME}:${VSPHERE_PASSWORD}@${VSPHERE_SERVER}"
 
-    # TODO: If there are no nodes from `govc find`, don't try to destroy anything.
-    # Currently when there are no nodes, `govc vm.destroy` errors out
-    # Delete nodes with the name of the cluster as part of the node / VM name
     time (govc find -k -type m . -name "${vsphere_cluster_name}*" | \
-        xargs govc vm.destroy -k -debug -dump)
+        xargs -r govc vm.destroy -k -debug -dump)
 }
