@@ -15,7 +15,7 @@ if [[ -z "$(command -v docker)" ]]; then
     if [[ "$BUILD_OS" == "Linux" ]]; then
         distro_id=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
         sudo apt-get update > /dev/null
-        sudo apt-get remove docker docker-engine docker.io containerd runc
+        sudo apt-get remove docker docker-engine docker.io containerd runc || true
         sudo apt-get install -y \
             apt-transport-https \
             ca-certificates \
