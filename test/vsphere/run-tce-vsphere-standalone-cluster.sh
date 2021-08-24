@@ -25,6 +25,7 @@ set -x
 # JUMPER_SSH_KNOWN_HOSTS_ENTRY - entry to put in the SSH client machine's (from where script is run) known_hosts file
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+TCE_REPO_PATH="${MY_DIR}"/../..
 
 declare -a required_env_vars=("VSPHERE_CONTROL_PLANE_ENDPOINT"
 "VSPHERE_SERVER"
@@ -41,25 +42,25 @@ declare -a required_env_vars=("VSPHERE_CONTROL_PLANE_ENDPOINT"
 "JUMPER_SSH_PRIVATE_KEY"
 "JUMPER_SSH_KNOWN_HOSTS_ENTRY")
 
-"${MY_DIR}"/check-required-env-vars.sh "${required_env_vars[@]}"
+"${TCE_REPO_PATH}"/test/vsphere/check-required-env-vars.sh "${required_env_vars[@]}"
 
-"${MY_DIR}"/../install-dependencies.sh
-"${MY_DIR}"/../build-tce.sh
+"${TCE_REPO_PATH}"/test/install-dependencies.sh || { error "Dependency installation failed!"; exit 1; }
+"${TCE_REPO_PATH}"/test/build-tce.sh || { error "TCE installation failed!"; exit 1; }
 
 # shellcheck source=test/util/utils.sh
-source "${MY_DIR}"/../util/utils.sh
+source "${TCE_REPO_PATH}"/test/util/utils.sh
 
 # shellcheck source=test/vsphere/cleanup-utils.sh
-source "${MY_DIR}"/cleanup-utils.sh
+source "${TCE_REPO_PATH}"/test/vsphere/cleanup-utils.sh
 
-export CLUSTER_NAME="guest-cluster-${RANDOM}"
+export CLUSTER_NAME="test-standalone-cluster-${RANDOM}"
 export PROXY_CONFIG_NAME=${CLUSTER_NAME}
 
-"${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
+"${TCE_REPO_PATH}"/test/vsphere/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
-trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
+trap '{ "${TCE_REPO_PATH}"/test/vsphere/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
-cluster_config_file="${MY_DIR}"/standalone-cluster-config.yaml
+cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/standalone-cluster-config.yaml
 
 tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
     error "STANDALONE CLUSTER CREATION FAILED!"
@@ -69,7 +70,7 @@ tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" 
     exit 1
 }
 
-"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
+"${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
 
 echo "Cleaning up"
 echo "Deleting standalone cluster"

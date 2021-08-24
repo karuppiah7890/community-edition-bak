@@ -26,6 +26,7 @@ set -x
 # JUMPER_SSH_KNOWN_HOSTS_ENTRY - entry to put in the SSH client machine's (from where script is run) known_hosts file
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+TCE_REPO_PATH="${MY_DIR}"/../..
 
 declare -a required_env_vars=("MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT"
 "WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT"
@@ -43,103 +44,96 @@ declare -a required_env_vars=("MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT
 "JUMPER_SSH_PRIVATE_KEY"
 "JUMPER_SSH_KNOWN_HOSTS_ENTRY")
 
-"${MY_DIR}"/check-required-env-vars.sh "${required_env_vars[@]}"
+"${TCE_REPO_PATH}"/test/vsphere/check-required-env-vars.sh "${required_env_vars[@]}"
 
-# "${MY_DIR}"/../install-dependencies.sh
-# "${MY_DIR}"/../build-tce.sh
+"${TCE_REPO_PATH}"/test/install-dependencies.sh || { error "Dependency installation failed!"; exit 1; }
+"${TCE_REPO_PATH}"/test/build-tce.sh || { error "TCE installation failed!"; exit 1; }
 
-# shellcheck source=test/utils.sh
-source "${MY_DIR}"/../utils.sh
+# shellcheck source=test/util/utils.sh
+source "${TCE_REPO_PATH}"/test/util/utils.sh
 
 # shellcheck source=test/vsphere/cleanup-utils.sh
-source "${MY_DIR}"/cleanup-utils.sh
+source "${TCE_REPO_PATH}"/test/vsphere/cleanup-utils.sh
 
 random_id="${RANDOM}"
 
-management_cluster_name="management-cluster-${random_id}"
-workload_cluster_name="workload-cluster-${random_id}"
+export MANAGEMENT_CLUSTER_NAME="test-management-cluster-${random_id}"
+export WORKLOAD_CLUSTER_NAME="test-workload-cluster-${random_id}"
 
-export PROXY_CONFIG_NAME="${management_cluster_name}-and-${workload_cluster_name}"
+export PROXY_CONFIG_NAME="${MANAGEMENT_CLUSTER_NAME}-and-${WORKLOAD_CLUSTER_NAME}"
 
-"${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
+"${TCE_REPO_PATH}"/test/vsphere/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
-trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
+trap '{ "${TCE_REPO_PATH}"/test/vsphere/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
-management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
+function cleanup_management_cluster {
+    echo "Using govc to cleanup ${MANAGEMENT_CLUSTER_NAME} management cluster resources"
+    govc_cleanup ${MANAGEMENT_CLUSTER_NAME} || error "MANAGEMENT CLUSTER CLEANUP USING GOVC FAILED! Please manually delete any ${MANAGEMENT_CLUSTER_NAME} management cluster resources using vCenter Web UI"
+}
+
+function cleanup_workload_cluster {
+    error "Using govc to cleanup ${WORKLOAD_CLUSTER_NAME} workload cluster resources"
+    govc_cleanup ${WORKLOAD_CLUSTER_NAME} || error "WORKLOAD CLUSTER CLEANUP USING GOVC FAILED! Please manually delete any ${WORKLOAD_CLUSTER_NAME} workload cluster resources using vCenter Web UI"
+}
+
+management_cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/management-cluster-config.yaml
 
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
 
-time tanzu management-cluster create ${management_cluster_name} --file "${management_cluster_config_file}" -v 10 || {
-    error "MANAGEMENT CLUSTER CREATION FAILED! Using govc to cleanup ${management_cluster_name} management cluster resources"
-    govc_cleanup ${management_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-
+time tanzu management-cluster create ${MANAGEMENT_CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
+    error "MANAGEMENT CLUSTER CREATION FAILED!"
+    cleanup_management_cluster
     exit 1
 }
 
-"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${management_cluster_name}-admin@${management_cluster_name}
+"${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${MANAGEMENT_CLUSTER_NAME}-admin@${MANAGEMENT_CLUSTER_NAME}
 
-workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
+workload_cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/workload-cluster-config.yaml
 
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
 
-time tanzu cluster create ${workload_cluster_name} --file "${workload_cluster_config_file}" -v 10 || {
+time tanzu cluster create ${WORKLOAD_CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
     error "WORKLOAD CLUSTER CREATION FAILED!"
-
-    echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
-    govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-
-    error "Using govc to cleanup ${workload_cluster_name} workload cluster resources"
-    govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
-
+    cleanup_management_cluster
+    cleanup_workload_cluster
     exit 1
 }
 
-"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${workload_cluster_name}-admin@${workload_cluster_name}
+"${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${WORKLOAD_CLUSTER_NAME}-admin@${WORKLOAD_CLUSTER_NAME}
 
 echo "Cleaning up"
 
 echo "Deleting workload cluster"
-time tanzu cluster delete ${workload_cluster_name} -y || {
-    error "WORKLOAD CLUSTER DELETION FAILED!!"
-
-    echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
-    govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-
-    error "Using govc to cleanup ${workload_cluster_name} workload cluster resources"
-    govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
-
+time tanzu cluster delete ${WORKLOAD_CLUSTER_NAME} -y || {
+    error "WORKLOAD CLUSTER DELETION FAILED!"
+    cleanup_management_cluster
+    cleanup_workload_cluster
     exit 1
 }
 
 wait_iterations=120
 
-for (( i = 1 ; i <= ${wait_iterations} ; i++))
+for (( i = 1 ; i <= wait_iterations ; i++))
 do
     echo "Waiting for workload cluster to get deleted..."
     num_of_clusters=$(tanzu cluster list -o json | jq 'length')
     if [[ "$num_of_clusters" != "0" ]]; then
-        echo "Workload cluster ${workload_cluster_name} successfully deleted"
+        echo "Workload cluster ${WORKLOAD_CLUSTER_NAME} successfully deleted"
         break
     fi
-    if [[ ${i} == ${wait_iterations} ]]; then
-        echo "Timed out waiting for workload cluster ${workload_cluster_name} to get deleted"
-
-        echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
-        govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-
-        error "Using govc to cleanup ${workload_cluster_name} workload cluster resources"
-        govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
-
+    if [[ "${i}" == "${wait_iterations}" ]]; then
+        echo "Timed out waiting for workload cluster ${WORKLOAD_CLUSTER_NAME} to get deleted"
+        cleanup_management_cluster
+        cleanup_workload_cluster
         exit 1
     fi
     sleep 5
 done
 
 echo "Deleting management cluster"
-time tanzu management-cluster delete ${management_cluster_name} -y || {
-    error "MANAGEMENT CLUSTER DELETION FAILED!! Using govc to cleanup ${management_cluster_name} management cluster resources"
-    govc_cleanup ${management_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-
+time tanzu management-cluster delete ${MANAGEMENT_CLUSTER_NAME} -y || {
+    error "MANAGEMENT CLUSTER DELETION FAILED!"
+    cleanup_management_cluster
     exit 1
 }
 
