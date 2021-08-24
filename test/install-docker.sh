@@ -1,6 +1,11 @@
 set -e
 set -x
 
+# Helper functions
+function error {
+    printf '\E[31m'; echo "$@"; printf '\E[0m'
+}
+
 # Make sure docker is installed
 echo "Checking for Docker..."
 if [[ -z "$(command -v docker)" ]]; then
