@@ -1,6 +1,8 @@
 set -e
 set -x
 
+BUILD_OS=$(uname -s)
+
 # Helper functions
 function error {
     printf '\E[31m'; echo "$@"; printf '\E[0m'
