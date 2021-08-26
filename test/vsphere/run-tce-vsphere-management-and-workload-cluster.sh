@@ -9,7 +9,8 @@ set -x
 # Note: This script supports only Linux(Debian/Ubuntu) and MacOS
 # Following environment variables are expected to be exported before running the script.
 # The script will fail if any of them is missing
-# VSPHERE_CONTROL_PLANE_ENDPOINT - virtual and static IP for the cluster's control plane nodes
+# MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT - virtual and static IP for the management cluster's control plane nodes
+# WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT - virtual and static IP for the management cluster's control plane nodes
 # VSPHERE_SERVER - private IP of the vcenter server
 # VSPHERE_SSH_AUTHORIZED_KEY - SSH public key to inject into control plane nodes and worker nodes for SSHing into them later
 # VSPHERE_USERNAME - vcenter username
