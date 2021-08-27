@@ -54,7 +54,11 @@ source "${MY_DIR}"/../utils.sh
 # shellcheck source=test/vsphere/cleanup-utils.sh
 source "${MY_DIR}"/cleanup-utils.sh
 
-export CLUSTER_NAME="guest-cluster-${RANDOM}"
+random_id="${RANDOM}"
+
+management_cluster_name="management-cluster-${random_id}"
+
+export CLUSTER_NAME="${management_cluster_name}"
 
 "${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
@@ -66,8 +70,8 @@ cluster_config_file="${MY_DIR}"/standalone-cluster-config.yaml
 # Cleanup function
 function deletecluster {
     echo "Deleting standalone cluster"
-    tanzu standalone-cluster delete ${CLUSTER_NAME} -y || {
-        error "STANDALONE CLUSTER DELETION FAILED!"
+    tanzu management-cluster delete ${CLUSTER_NAME} -y || {
+        error "MANAGEMENT CLUSTER DELETION FAILED!"
         govc_cleanup
         # Finally fail after cleanup because cluster delete command failed,
         # and cluster delete command is a subject under test (SUT) in the E2E test
@@ -75,8 +79,8 @@ function deletecluster {
     }
 }
 
-tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
-    error "STANDALONE CLUSTER CREATION FAILED!"
+tanzu management-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
+    error "MANAGEMENT CLUSTER CREATION FAILED!"
     deletecluster
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
