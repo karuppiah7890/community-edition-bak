@@ -17,6 +17,13 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 subnets_needing_proxy="${@}"
 
+declare -a required_env_vars=("JUMPER_SSH_HOST_IP"
+"JUMPER_SSH_USERNAME"
+"JUMPER_SSH_PRIVATE_KEY"
+"JUMPER_SSH_KNOWN_HOSTS_ENTRY")
+
+"${MY_DIR}"/check-required-env-vars.sh "${required_env_vars[@]}"
+
 "${MY_DIR}"/install-sshuttle.sh
 
 export JUMPER_SSH_HOST_NAME=vmc-jumper-${CLUSTER_NAME}
