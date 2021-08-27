@@ -23,7 +23,17 @@ function install_govc {
     fi
 }
 
+# TODO: take cluster name as argument for vsphere cluster name
+# use vsphere_cluster_name as the variable name
 function govc_cleanup {
+    MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+    declare -a required_env_vars=("VSPHERE_SERVER"
+    "VSPHERE_USERNAME"
+    "VSPHERE_PASSWORD")
+
+    "${MY_DIR}"/check-required-env-vars.sh "${required_env_vars[@]}"
+
     # Install govc if is not already installed
     install_govc
 
