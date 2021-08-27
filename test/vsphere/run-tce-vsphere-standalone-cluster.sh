@@ -26,7 +26,22 @@ set -x
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-"${MY_DIR}"/check-required-env-vars.sh
+declare -a required_env_vars=("VSPHERE_CONTROL_PLANE_ENDPOINT"
+"VSPHERE_SERVER"
+"VSPHERE_SSH_AUTHORIZED_KEY"
+"VSPHERE_USERNAME"
+"VSPHERE_PASSWORD"
+"VSPHERE_DATACENTER"
+"VSPHERE_DATASTORE"
+"VSPHERE_FOLDER"
+"VSPHERE_NETWORK"
+"VSPHERE_RESOURCE_POOL"
+"JUMPER_SSH_HOST_IP"
+"JUMPER_SSH_USERNAME"
+"JUMPER_SSH_PRIVATE_KEY"
+"JUMPER_SSH_KNOWN_HOSTS_ENTRY")
+
+"${MY_DIR}"/check-required-env-vars.sh "${required_env_vars[@]}"
 
 "${MY_DIR}"/../install-dependencies.sh
 "${MY_DIR}"/../build-tce.sh
