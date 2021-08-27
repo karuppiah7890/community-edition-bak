@@ -57,6 +57,7 @@ source "${MY_DIR}"/cleanup-utils.sh
 random_id="${RANDOM}"
 
 management_cluster_name="management-cluster-${random_id}"
+workload_cluster_name="workload-cluster-${random_id}"
 
 export CLUSTER_NAME="${management_cluster_name}"
 
