@@ -7,6 +7,11 @@ set -e
 
 required_env_vars=( "${@}" )
 
+if [ "${#required_env_vars[@]}" == 0 ]; then
+    echo "No environment variable names passed to check required environment variables. Skipping check"
+    exit 0
+fi
+
 for env_var in "${required_env_vars[@]}"
 do
     if [ -z "$(printenv "${env_var}")" ]; then
