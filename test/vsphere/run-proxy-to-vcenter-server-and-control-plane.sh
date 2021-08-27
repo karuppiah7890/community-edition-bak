@@ -17,6 +17,8 @@ set -x
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+subnets_needing_proxy="${@}"
+
 "${MY_DIR}"/install-sshuttle.sh
 
 export JUMPER_SSH_HOST_NAME=vmc-jumper-${CLUSTER_NAME}
@@ -44,4 +46,4 @@ chmod 400 "${JUMPER_SSH_PRIVATE_KEY_LOCATION}"
 
 printenv 'JUMPER_SSH_KNOWN_HOSTS_ENTRY' >> ${ssh_known_hosts_file}
 
-sshuttle --daemon -vvvvvvvv --remote "${JUMPER_SSH_HOST_NAME}" "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
+sshuttle --daemon -vvvvvvvv --remote "${JUMPER_SSH_HOST_NAME}" "${subnets_needing_proxy}"

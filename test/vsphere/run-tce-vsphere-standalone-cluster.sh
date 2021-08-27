@@ -54,7 +54,7 @@ source "${MY_DIR}"/cleanup-utils.sh
 
 export CLUSTER_NAME="guest-cluster-${RANDOM}"
 
-"${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh
+"${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
 trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
