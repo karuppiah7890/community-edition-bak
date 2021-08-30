@@ -53,6 +53,7 @@ source "${MY_DIR}"/../util/utils.sh
 source "${MY_DIR}"/cleanup-utils.sh
 
 export CLUSTER_NAME="guest-cluster-${RANDOM}"
+export PROXY_CONFIG_NAME=${CLUSTER_NAME}
 
 "${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 

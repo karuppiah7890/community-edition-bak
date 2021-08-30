@@ -12,6 +12,7 @@ set -x
 # JUMPER_SSH_USERNAME - username to access the Jumper host for SSH
 # JUMPER_SSH_PRIVATE_KEY - private key to access to access the Jumper host for SSH
 # JUMPER_SSH_KNOWN_HOSTS_ENTRY - entry to put in the SSH client machine's (from where script is run) known_hosts file
+# PROXY_CONFIG_NAME - a name to identify the entity/entities needing the proxy. This is used in SSH config file for Host field
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
@@ -20,13 +21,14 @@ subnets_needing_proxy="${@}"
 declare -a required_env_vars=("JUMPER_SSH_HOST_IP"
 "JUMPER_SSH_USERNAME"
 "JUMPER_SSH_PRIVATE_KEY"
-"JUMPER_SSH_KNOWN_HOSTS_ENTRY")
+"JUMPER_SSH_KNOWN_HOSTS_ENTRY"
+"PROXY_CONFIG_NAME")
 
 "${MY_DIR}"/check-required-env-vars.sh "${required_env_vars[@]}"
 
 "${MY_DIR}"/install-sshuttle.sh
 
-export JUMPER_SSH_HOST_NAME=vmc-jumper-${CLUSTER_NAME}
+export JUMPER_SSH_HOST_NAME=vmc-jumper-${PROXY_CONFIG_NAME}-${RANDOM}
 export JUMPER_SSH_PRIVATE_KEY_LOCATION=${HOME}/.ssh/jumper_private_key
 
 ssh_config_file_template="${MY_DIR}"/ssh-config-template

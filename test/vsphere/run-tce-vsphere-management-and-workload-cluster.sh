@@ -60,6 +60,7 @@ management_cluster_name="management-cluster-${random_id}"
 workload_cluster_name="workload-cluster-${random_id}"
 
 export CLUSTER_NAME="${management_cluster_name}"
+export PROXY_CONFIG_NAME="${management_cluster_name}-and-${workload_cluster_name}"
 
 "${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
