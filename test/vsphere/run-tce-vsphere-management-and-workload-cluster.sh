@@ -59,6 +59,8 @@ random_id="${RANDOM}"
 management_cluster_name="management-cluster-${random_id}"
 workload_cluster_name="workload-cluster-${random_id}"
 
+# TODO: get rid of this env var name - `CLUSTER_NAME`
+# and delete it completely and see if the automation works!! :)
 export CLUSTER_NAME="${management_cluster_name}"
 export PROXY_CONFIG_NAME="${management_cluster_name}-and-${workload_cluster_name}"
 
