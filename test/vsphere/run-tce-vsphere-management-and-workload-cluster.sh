@@ -66,7 +66,7 @@ export PROXY_CONFIG_NAME="${management_cluster_name}-and-${workload_cluster_name
 
 trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
-# Cleanup function
+# Cleanup function for cleaning up management cluster
 function delete_management_cluster {
     vsphere_cluster_name=$1
 
@@ -84,6 +84,8 @@ function delete_management_cluster {
         exit 1
     }
 }
+
+# TODO: Cleanup function for cleaning up workload cluster
 
 management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
