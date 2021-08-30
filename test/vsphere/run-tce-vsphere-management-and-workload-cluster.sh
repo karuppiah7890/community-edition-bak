@@ -86,6 +86,23 @@ function delete_management_cluster {
 }
 
 # TODO: Cleanup function for cleaning up workload cluster
+function delete_workload_cluster {
+    vsphere_cluster_name=$1
+
+    if [[ -z "${vsphere_cluster_name}" ]]; then
+        echo "Cluster name not passed to delete_workload_cluster function. Usage example: delete_workload_cluster workload-cluster-1234"
+        exit 1
+    fi
+
+    echo "Deleting workload cluster"
+    tanzu cluster delete ${vsphere_cluster_name} -y || {
+        error "WORKLOAD CLUSTER DELETION FAILED!"
+        govc_cleanup ${vsphere_cluster_name}
+        # Finally fail after cleanup because cluster delete command failed,
+        # and cluster delete command is a subject under test (SUT) in the E2E test
+        exit 1
+    }
+}
 
 management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
@@ -128,4 +145,7 @@ tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v
 # TODO cleanup management cluster
 
 echo "Cleaning up"
-delete_management_cluster
+
+delete_workload_cluster ${workload_cluster_name}
+
+delete_management_cluster ${management_cluster_name}
