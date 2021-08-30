@@ -67,11 +67,18 @@ export PROXY_CONFIG_NAME="${management_cluster_name}-and-${workload_cluster_name
 trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
 # Cleanup function
-function deletecluster {
-    echo "Deleting standalone cluster"
-    tanzu management-cluster delete ${CLUSTER_NAME} -y || {
+function delete_management_cluster {
+    vsphere_cluster_name=$1
+
+    if [[ -z "${vsphere_cluster_name}" ]]; then
+        echo "Cluster name not passed to delete_management_cluster function. Usage example: delete_management_cluster management-cluster-1234"
+        exit 1
+    fi
+
+    echo "Deleting management cluster"
+    tanzu management-cluster delete ${vsphere_cluster_name} -y || {
         error "MANAGEMENT CLUSTER DELETION FAILED!"
-        govc_cleanup ${CLUSTER_NAME}
+        govc_cleanup ${vsphere_cluster_name}
         # Finally fail after cleanup because cluster delete command failed,
         # and cluster delete command is a subject under test (SUT) in the E2E test
         exit 1
@@ -85,7 +92,7 @@ tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_con
     # TODO: directly delete the management cluster with govc, that's better.
     # as creation failing can be very tricky to delete with tanzu management-cluster delete
     # command.
-    deletecluster
+    delete_management_cluster ${CLUSTER_NAME}
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
     exit 1
@@ -102,7 +109,7 @@ tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v
     # TODO: directly delete the workload cluster with govc, that's better.
     # as creation failing can be very tricky to delete with tanzu cluster delete
     # command.
-    deletecluster
+    delete_management_cluster ${CLUSTER_NAME}
 
     # TODO: Finally, delete the management cluster with tanzu management-cluster delete command.
     # and if that fails, then delete the management cluster with govc!
@@ -119,4 +126,4 @@ tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v
 # TODO cleanup management cluster
 
 echo "Cleaning up"
-deletecluster
+delete_management_cluster
