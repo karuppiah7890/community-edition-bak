@@ -66,9 +66,6 @@ export PROXY_CONFIG_NAME="${management_cluster_name}-and-${workload_cluster_name
 
 trap '{ "${MY_DIR}"/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
-# TODO use management cluster config
-cluster_config_file="${MY_DIR}"/standalone-cluster-config.yaml
-
 # Cleanup function
 function deletecluster {
     echo "Deleting standalone cluster"
@@ -81,7 +78,9 @@ function deletecluster {
     }
 }
 
-tanzu management-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
+management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
+
+tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED!"
     # TODO: directly delete the management cluster with govc, that's better.
     # as creation failing can be very tricky to delete with tanzu management-cluster delete
@@ -96,7 +95,9 @@ tanzu management-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" 
 
 export CLUSTER_NAME="${workload_cluster_name}"
 
-tanzu cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
+workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
+
+tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
     error "WORKLOAD CLUSTER CREATION FAILED!"
     # TODO: directly delete the workload cluster with govc, that's better.
     # as creation failing can be very tricky to delete with tanzu cluster delete
