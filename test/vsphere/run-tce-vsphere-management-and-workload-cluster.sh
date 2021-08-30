@@ -61,6 +61,8 @@ workload_cluster_name="workload-cluster-${random_id}"
 
 # TODO: get rid of this env var name - `CLUSTER_NAME`
 # and delete it completely and see if the automation works!! :)
+# Cluster creation should work without CLUSTER_NAME in the yaml and in env vars
+# It will work with `create`'s name argument!
 export CLUSTER_NAME="${management_cluster_name}"
 export PROXY_CONFIG_NAME="${management_cluster_name}-and-${workload_cluster_name}"
 
