@@ -29,7 +29,7 @@ function govc_cleanup {
     vsphere_cluster_name=$1
 
     if [[ -z "${vsphere_cluster_name}" ]]; then
-        echo "Cluster name not passed to govc_cleanup function. Usage: govc_cleanup management-cluster-1234"
+        echo "Cluster name not passed to govc_cleanup function. Usage example: govc_cleanup management-cluster-1234"
         exit 1
     fi
 
