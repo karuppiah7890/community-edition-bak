@@ -112,10 +112,7 @@ management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
 tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED!"
-    # TODO: directly delete the management cluster with govc, that's better.
-    # as creation failing can be very tricky to delete with tanzu management-cluster delete
-    # command.
-    delete_management_cluster ${CLUSTER_NAME}
+    govc_cleanup ${CLUSTER_NAME}
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
     exit 1
@@ -129,10 +126,7 @@ workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
 
 tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
     error "WORKLOAD CLUSTER CREATION FAILED!"
-    # TODO: directly delete the workload cluster with govc, that's better.
-    # as creation failing can be very tricky to delete with tanzu cluster delete
-    # command.
-    delete_management_cluster ${CLUSTER_NAME}
+    govc_cleanup ${CLUSTER_NAME}
 
     # TODO: Finally, delete the management cluster with tanzu management-cluster delete command.
     # and if that fails, then delete the management cluster with govc!
