@@ -82,6 +82,9 @@ function deletecluster {
 
 tanzu management-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED!"
+    # TODO: directly delete the management cluster with govc, that's better.
+    # as creation failing can be very tricky to delete with tanzu management-cluster delete
+    # command.
     deletecluster
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
@@ -89,6 +92,29 @@ tanzu management-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" 
 }
 
 "${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
+
+export CLUSTER_NAME="${workload_cluster_name}"
+
+tanzu cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
+    error "WORKLOAD CLUSTER CREATION FAILED!"
+    # TODO: directly delete the workload cluster with govc, that's better.
+    # as creation failing can be very tricky to delete with tanzu cluster delete
+    # command.
+    deletecluster
+
+    # TODO: Finally, delete the management cluster with tanzu management-cluster delete command.
+    # and if that fails, then delete the management cluster with govc!
+
+    # Finally fail after cleanup because cluster create command failed,
+    # and cluster create command is a subject under test (SUT) in the E2E test
+    exit 1
+}
+
+"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
+
+# TODO cleanup workload cluster
+
+# TODO cleanup management cluster
 
 echo "Cleaning up"
 deletecluster
