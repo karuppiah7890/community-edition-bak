@@ -112,6 +112,7 @@ management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
 tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED!"
+    # TODO: what if govc_cleanup fails? It just stops? it's okay?
     govc_cleanup ${CLUSTER_NAME}
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
@@ -126,6 +127,8 @@ workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
 
 tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
     error "WORKLOAD CLUSTER CREATION FAILED!"
+    # TODO: what if govc_cleanup fails? It just stops? it's okay? we still have to delete management cluster at least
+    # even if workload cluster deletion fails
     govc_cleanup ${CLUSTER_NAME}
 
     delete_management_cluster ${management_cluster_name}
@@ -143,6 +146,8 @@ tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v
 
 echo "Cleaning up"
 
+# TODO: what if delete_workload_cluster fails? It just stops? it's okay? we still have to delete management cluster at least
+# even if workload cluster deletion fails
 delete_workload_cluster ${workload_cluster_name}
 
 delete_management_cluster ${management_cluster_name}
