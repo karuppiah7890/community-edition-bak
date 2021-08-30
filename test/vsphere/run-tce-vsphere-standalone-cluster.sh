@@ -82,10 +82,7 @@ function deletecluster {
 
 tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
     error "STANDALONE CLUSTER CREATION FAILED!"
-    # TODO: directly delete the management cluster with govc, that's better.
-    # as creation failing can be very tricky to delete with tanzu management-cluster delete
-    # command.
-    deletecluster ${CLUSTER_NAME}
+    govc_cleanup ${CLUSTER_NAME}
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
     exit 1
