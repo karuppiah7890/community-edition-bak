@@ -26,6 +26,13 @@ function install_govc {
 # TODO: take cluster name as argument for vsphere cluster name
 # use vsphere_cluster_name as the variable name
 function govc_cleanup {
+    vsphere_cluster_name=$1
+
+    if [[ -z "${vsphere_cluster_name}" ]]; then
+        echo "Cluster name not passed to govc_cleanup function. Usage: govc_cleanup management-cluster-1234"
+        exit 1
+    fi
+
     MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
     declare -a required_env_vars=("VSPHERE_SERVER"
@@ -40,6 +47,6 @@ function govc_cleanup {
     export GOVC_URL="${VSPHERE_USERNAME}:${VSPHERE_PASSWORD}@${VSPHERE_SERVER}"
 
     # Delete nodes with the name of the cluster as part of the node / VM name
-    govc find -k -type m . -name "${CLUSTER_NAME}*" | \
+    govc find -k -type m . -name "${vsphere_cluster_name}*" | \
         xargs govc vm.destroy -k -debug -dump
 }

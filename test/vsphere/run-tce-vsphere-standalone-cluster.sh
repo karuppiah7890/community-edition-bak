@@ -66,7 +66,7 @@ function deletecluster {
     echo "Deleting standalone cluster"
     tanzu standalone-cluster delete ${CLUSTER_NAME} -y || {
         error "STANDALONE CLUSTER DELETION FAILED!"
-        govc_cleanup
+        govc_cleanup ${CLUSTER_NAME}
         # Finally fail after cleanup because cluster delete command failed,
         # and cluster delete command is a subject under test (SUT) in the E2E test
         exit 1
