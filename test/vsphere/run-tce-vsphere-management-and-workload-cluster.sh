@@ -112,9 +112,7 @@ management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
 tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED!"
-    # TODO: what if govc_cleanup fails? It just stops? it's okay I guess? however it's gonna stop, with exit 1, hmm.
-    # but we need error messages here!
-    govc_cleanup ${CLUSTER_NAME}
+    govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any resources using vCenter Web UI"
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
     exit 1
