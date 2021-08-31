@@ -111,7 +111,7 @@ function delete_workload_cluster {
 management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
 tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
-    error "MANAGEMENT CLUSTER CREATION FAILED!"
+    error "MANAGEMENT CLUSTER CREATION FAILED! Using govc to cleanup cluster resources"
     govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} management cluster resources using vCenter Web UI"
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
@@ -125,7 +125,7 @@ export CLUSTER_NAME="${workload_cluster_name}"
 workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
 
 tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
-    error "WORKLOAD CLUSTER CREATION FAILED!"
+    error "WORKLOAD CLUSTER CREATION FAILED! Using govc to cleanup cluster resources"
     govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} workload cluster resources using vCenter Web UI"
 
     delete_management_cluster ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED!"
