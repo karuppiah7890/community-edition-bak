@@ -126,9 +126,7 @@ workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
 
 tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
     error "WORKLOAD CLUSTER CREATION FAILED!"
-    # TODO: what if govc_cleanup fails? It just stops? it's okay? we still have to delete management cluster at least
-    # even if workload cluster deletion fails
-    govc_cleanup ${CLUSTER_NAME}
+    govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} workload cluster resources using vCenter Web UI"
 
     delete_management_cluster ${management_cluster_name}
 
