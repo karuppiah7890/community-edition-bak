@@ -149,4 +149,6 @@ delete_workload_cluster ${workload_cluster_name} || {
     exit 1
 }
 
+# TODO: wait to check if workload cluster has been deleted and then delete maangement cluster
+
 delete_management_cluster ${management_cluster_name}
