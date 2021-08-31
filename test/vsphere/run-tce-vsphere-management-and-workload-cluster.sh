@@ -112,7 +112,7 @@ management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
 tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED!"
-    govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any resources using vCenter Web UI"
+    govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} management cluster resources using vCenter Web UI"
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
     exit 1
