@@ -82,8 +82,7 @@ function delete_management_cluster {
     tanzu management-cluster delete ${vsphere_cluster_name} -y || {
         # TODO: let's mention cluster name in the error?
         error "MANAGEMENT CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
-        # TODO: what if govc_cleanup fails? It just stops? it's okay?
-        govc_cleanup ${vsphere_cluster_name}
+        govc_cleanup ${vsphere_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} management cluster resources using vCenter Web UI"
         # Finally fail after cleanup because cluster delete command failed,
         # and cluster delete command is a subject under test (SUT) in the E2E test
         exit 1
@@ -102,8 +101,7 @@ function delete_workload_cluster {
     tanzu cluster delete ${vsphere_cluster_name} -y || {
         # TODO: let's mention cluster name in the error?
         error "WORKLOAD CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
-        # TODO: what if govc_cleanup fails? It just stops? it's okay?
-        govc_cleanup ${vsphere_cluster_name}
+        govc_cleanup ${vsphere_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${vsphere_cluster_name} workload cluster resources using vCenter Web UI"
         # Finally fail after cleanup because cluster delete command failed,
         # and cluster delete command is a subject under test (SUT) in the E2E test
         exit 1
@@ -130,23 +128,21 @@ tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v
     error "WORKLOAD CLUSTER CREATION FAILED!"
     govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} workload cluster resources using vCenter Web UI"
 
-    delete_management_cluster ${management_cluster_name}
+    delete_management_cluster ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED!"
 
-    # Finally fail after cleanup because cluster create command failed,
-    # and cluster create command is a subject under test (SUT) in the E2E test
     exit 1
 }
 
 "${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
 
-# TODO cleanup workload cluster
-
-# TODO cleanup management cluster
-
 echo "Cleaning up"
 
-# TODO: what if delete_workload_cluster fails? It just stops? it's okay? we still have to delete management cluster at least
-# even if workload cluster deletion fails
-delete_workload_cluster ${workload_cluster_name}
+delete_workload_cluster ${workload_cluster_name} || {
+    error "WORKLOAD CLUSTER DELETION FAILED!"
+
+    delete_management_cluster ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED!"
+
+    exit 1
+}
 
 delete_management_cluster ${management_cluster_name}
