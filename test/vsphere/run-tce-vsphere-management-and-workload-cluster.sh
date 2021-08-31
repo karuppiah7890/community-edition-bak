@@ -45,8 +45,8 @@ declare -a required_env_vars=("MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT
 
 "${MY_DIR}"/check-required-env-vars.sh "${required_env_vars[@]}"
 
-"${MY_DIR}"/../install-dependencies.sh
-"${MY_DIR}"/../build-tce.sh
+# "${MY_DIR}"/../install-dependencies.sh
+# "${MY_DIR}"/../build-tce.sh
 
 # shellcheck source=test/utils.sh
 source "${MY_DIR}"/../utils.sh
@@ -79,7 +79,7 @@ function delete_management_cluster {
     fi
 
     echo "Deleting management cluster"
-    tanzu management-cluster delete ${vsphere_cluster_name} -y || {
+    time tanzu management-cluster delete ${vsphere_cluster_name} -y || {
         # TODO: let's mention cluster name in the error?
         error "MANAGEMENT CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
         govc_cleanup ${vsphere_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} management cluster resources using vCenter Web UI"
@@ -98,7 +98,7 @@ function delete_workload_cluster {
     fi
 
     echo "Deleting workload cluster"
-    tanzu cluster delete ${vsphere_cluster_name} -y || {
+    time tanzu cluster delete ${vsphere_cluster_name} -y || {
         # TODO: let's mention cluster name in the error?
         error "WORKLOAD CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
         govc_cleanup ${vsphere_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${vsphere_cluster_name} workload cluster resources using vCenter Web UI"
@@ -110,7 +110,7 @@ function delete_workload_cluster {
 
 management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
-tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
+time tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED! Using govc to cleanup cluster resources"
     govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} management cluster resources using vCenter Web UI"
     # Finally fail after cleanup because cluster create command failed,
@@ -124,7 +124,7 @@ export CLUSTER_NAME="${workload_cluster_name}"
 
 workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
 
-tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
+time tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
     error "WORKLOAD CLUSTER CREATION FAILED! Using govc to cleanup cluster resources"
     govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} workload cluster resources using vCenter Web UI"
 

@@ -47,6 +47,6 @@ function govc_cleanup {
     export GOVC_URL="${VSPHERE_USERNAME}:${VSPHERE_PASSWORD}@${VSPHERE_SERVER}"
 
     # Delete nodes with the name of the cluster as part of the node / VM name
-    govc find -k -type m . -name "${vsphere_cluster_name}*" | \
-        xargs govc vm.destroy -k -debug -dump
+    time (govc find -k -type m . -name "${vsphere_cluster_name}*" | \
+        xargs govc vm.destroy -k -debug -dump)
 }
