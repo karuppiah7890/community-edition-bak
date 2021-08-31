@@ -80,7 +80,7 @@ function delete_management_cluster {
 
     echo "Deleting management cluster"
     tanzu management-cluster delete ${vsphere_cluster_name} -y || {
-        error "MANAGEMENT CLUSTER DELETION FAILED!"
+        error "MANAGEMENT CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
         # TODO: what if govc_cleanup fails? It just stops? it's okay?
         govc_cleanup ${vsphere_cluster_name}
         # Finally fail after cleanup because cluster delete command failed,
@@ -99,7 +99,7 @@ function delete_workload_cluster {
 
     echo "Deleting workload cluster"
     tanzu cluster delete ${vsphere_cluster_name} -y || {
-        error "WORKLOAD CLUSTER DELETION FAILED!"
+        error "WORKLOAD CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
         # TODO: what if govc_cleanup fails? It just stops? it's okay?
         govc_cleanup ${vsphere_cluster_name}
         # Finally fail after cleanup because cluster delete command failed,
