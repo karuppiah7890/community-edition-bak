@@ -70,7 +70,7 @@ management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
 
 time tanzu management-cluster create ${management_cluster_name} --file "${management_cluster_config_file}" -v 10 || {
-    error "MANAGEMENT CLUSTER CREATION FAILED! Using govc to cleanup cluster resources"
+    error "MANAGEMENT CLUSTER CREATION FAILED! Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
@@ -84,7 +84,7 @@ workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
 
 time tanzu cluster create ${workload_cluster_name} --file "${workload_cluster_config_file}" -v 10 || {
-    error "WORKLOAD CLUSTER CREATION FAILED! Using govc to cleanup cluster resources"
+    error "WORKLOAD CLUSTER CREATION FAILED! Using govc to cleanup ${workload_cluster_name} workload cluster resources"
     govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
 
     echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
@@ -99,8 +99,7 @@ echo "Cleaning up"
 
 echo "Deleting workload cluster"
 time tanzu cluster delete ${workload_cluster_name} -y || {
-    # TODO: let's mention cluster name in the error?
-    error "WORKLOAD CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
+    error "WORKLOAD CLUSTER DELETION FAILED!! Using govc to cleanup ${workload_cluster_name} workload cluster resources"
     govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
 
     echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
@@ -127,8 +126,7 @@ done
 
 echo "Deleting management cluster"
 time tanzu management-cluster delete ${management_cluster_name} -y || {
-    # TODO: let's mention cluster name in the error?
-    error "MANAGEMENT CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
+    error "MANAGEMENT CLUSTER DELETION FAILED!! Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
     # Finally fail after cleanup because cluster delete command failed,
     # and cluster delete command is a subject under test (SUT) in the E2E test
