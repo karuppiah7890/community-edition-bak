@@ -89,25 +89,6 @@ function delete_management_cluster {
     }
 }
 
-function delete_workload_cluster {
-    vsphere_cluster_name=$1
-
-    if [[ -z "${vsphere_cluster_name}" ]]; then
-        echo "Cluster name not passed to delete_workload_cluster function. Usage example: delete_workload_cluster workload-cluster-1234"
-        exit 1
-    fi
-
-    echo "Deleting workload cluster"
-    time tanzu cluster delete ${vsphere_cluster_name} -y || {
-        # TODO: let's mention cluster name in the error?
-        error "WORKLOAD CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
-        govc_cleanup ${vsphere_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${vsphere_cluster_name} workload cluster resources using vCenter Web UI"
-        # Finally fail after cleanup because cluster delete command failed,
-        # and cluster delete command is a subject under test (SUT) in the E2E test
-        exit 1
-    }
-}
-
 management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
@@ -142,12 +123,16 @@ time tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file
 
 echo "Cleaning up"
 
-delete_workload_cluster ${workload_cluster_name} || {
-    error "WORKLOAD CLUSTER DELETION FAILED!"
+echo "Deleting workload cluster"
+time tanzu cluster delete ${workload_cluster_name} -y || {
+    # TODO: let's mention cluster name in the error?
+    error "WORKLOAD CLUSTER DELETION FAILED!! Using govc to cleanup cluster resources"
+    govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
 
     echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-
+    # Finally fail after cleanup because cluster delete command failed,
+    # and cluster delete command is a subject under test (SUT) in the E2E test
     exit 1
 }
 
