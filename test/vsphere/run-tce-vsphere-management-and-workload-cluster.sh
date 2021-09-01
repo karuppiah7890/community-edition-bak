@@ -72,8 +72,7 @@ export VSPHERE_CONTROL_PLANE_ENDPOINT=${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE
 time tanzu management-cluster create ${management_cluster_name} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED! Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-    # Finally fail after cleanup because cluster create command failed,
-    # and cluster create command is a subject under test (SUT) in the E2E test
+
     exit 1
 }
 
@@ -104,8 +103,7 @@ time tanzu cluster delete ${workload_cluster_name} -y || {
 
     echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-    # Finally fail after cleanup because cluster delete command failed,
-    # and cluster delete command is a subject under test (SUT) in the E2E test
+
     exit 1
 }
 
@@ -128,8 +126,7 @@ echo "Deleting management cluster"
 time tanzu management-cluster delete ${management_cluster_name} -y || {
     error "MANAGEMENT CLUSTER DELETION FAILED!! Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-    # Finally fail after cleanup because cluster delete command failed,
-    # and cluster delete command is a subject under test (SUT) in the E2E test
+
     exit 1
 }
 
