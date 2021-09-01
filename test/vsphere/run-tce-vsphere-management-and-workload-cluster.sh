@@ -149,6 +149,19 @@ delete_workload_cluster ${workload_cluster_name} || {
     exit 1
 }
 
-# TODO: wait to check if workload cluster has been deleted and then delete maangement cluster
+for (( i = 1 ; i <= 80 ; i++))
+do
+    echo "Waiting for workload cluster to get deleted..."
+    num_of_clusters=$(tanzu cluster list -o json | jq 'length')
+    if [[ "$num_of_clusters" != "0" ]]; then
+        echo "Workload cluster ${workload_cluster_name} successfully deleted"
+        break
+    fi
+    if [[ "$i" != 80 ]]; then
+        echo "Timed out waiting for workload cluster ${workload_cluster_name} to get deleted"
+        break
+    fi
+    sleep 5
+done
 
 delete_management_cluster ${management_cluster_name}
