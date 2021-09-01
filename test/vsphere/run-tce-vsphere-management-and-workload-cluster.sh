@@ -59,11 +59,6 @@ random_id="${RANDOM}"
 management_cluster_name="management-cluster-${random_id}"
 workload_cluster_name="workload-cluster-${random_id}"
 
-# TODO: get rid of this env var name - `CLUSTER_NAME`
-# and delete it completely and see if the automation works!! :)
-# Cluster creation should work without CLUSTER_NAME in the yaml and in env vars
-# It will work with `create`'s name argument!
-export CLUSTER_NAME="${management_cluster_name}"
 export PROXY_CONFIG_NAME="${management_cluster_name}-and-${workload_cluster_name}"
 
 "${MY_DIR}"/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
@@ -74,25 +69,23 @@ management_cluster_config_file="${MY_DIR}"/management-cluster-config.yaml
 
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
 
-time tanzu management-cluster create ${CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
+time tanzu management-cluster create ${management_cluster_name} --file "${management_cluster_config_file}" -v 10 || {
     error "MANAGEMENT CLUSTER CREATION FAILED! Using govc to cleanup cluster resources"
-    govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} management cluster resources using vCenter Web UI"
+    govc_cleanup ${management_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
     # Finally fail after cleanup because cluster create command failed,
     # and cluster create command is a subject under test (SUT) in the E2E test
     exit 1
 }
 
-"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
-
-export CLUSTER_NAME="${workload_cluster_name}"
+"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${management_cluster_name}-admin@${management_cluster_name}
 
 workload_cluster_config_file="${MY_DIR}"/workload-cluster-config.yaml
 
 export VSPHERE_CONTROL_PLANE_ENDPOINT=${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
 
-time tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
+time tanzu cluster create ${workload_cluster_name} --file "${workload_cluster_config_file}" -v 10 || {
     error "WORKLOAD CLUSTER CREATION FAILED! Using govc to cleanup cluster resources"
-    govc_cleanup ${CLUSTER_NAME} || error "GOVC CLEANUP FAILED!! Please manually delete any ${CLUSTER_NAME} workload cluster resources using vCenter Web UI"
+    govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
 
     echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
@@ -100,7 +93,7 @@ time tanzu cluster create ${CLUSTER_NAME} --file "${workload_cluster_config_file
     exit 1
 }
 
-"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
+"${MY_DIR}"/../docker/check-tce-cluster-creation.sh ${workload_cluster_name}-admin@${workload_cluster_name}
 
 echo "Cleaning up"
 
