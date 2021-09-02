@@ -119,7 +119,7 @@ do
         echo "Workload cluster ${workload_cluster_name} successfully deleted"
         break
     fi
-    if [[ "$i" != 120 ]]; then
+    if [[ "$i" == 120 ]]; then
         echo "Timed out waiting for workload cluster ${workload_cluster_name} to get deleted"
         break
     fi
