@@ -111,7 +111,9 @@ time tanzu cluster delete ${workload_cluster_name} -y || {
     exit 1
 }
 
-for (( i = 1 ; i <= 120 ; i++))
+wait_iterations=120
+
+for (( i = 1 ; i <= ${wait_iterations} ; i++))
 do
     echo "Waiting for workload cluster to get deleted..."
     num_of_clusters=$(tanzu cluster list -o json | jq 'length')
@@ -119,7 +121,7 @@ do
         echo "Workload cluster ${workload_cluster_name} successfully deleted"
         break
     fi
-    if [[ "$i" == 120 ]]; then
+    if [[ ${i} == ${wait_iterations} ]]; then
         echo "Timed out waiting for workload cluster ${workload_cluster_name} to get deleted"
 
         echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
