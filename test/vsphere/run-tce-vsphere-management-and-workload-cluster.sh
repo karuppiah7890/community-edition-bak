@@ -87,7 +87,7 @@ time tanzu cluster create ${workload_cluster_name} --file "${workload_cluster_co
 
     echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-    
+
     error "Using govc to cleanup ${workload_cluster_name} workload cluster resources"
     govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
 
@@ -104,7 +104,7 @@ time tanzu cluster delete ${workload_cluster_name} -y || {
 
     echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
     govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
-    
+
     error "Using govc to cleanup ${workload_cluster_name} workload cluster resources"
     govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
 
@@ -121,7 +121,14 @@ do
     fi
     if [[ "$i" == 120 ]]; then
         echo "Timed out waiting for workload cluster ${workload_cluster_name} to get deleted"
-        break
+
+        echo "Using govc to cleanup ${management_cluster_name} management cluster resources"
+        govc_cleanup ${management_cluster_name} || error "MANAGEMENT CLUSTER DELETION FAILED! GOVC CLEANUP FAILED!! Please manually delete any ${management_cluster_name} management cluster resources using vCenter Web UI"
+
+        error "Using govc to cleanup ${workload_cluster_name} workload cluster resources"
+        govc_cleanup ${workload_cluster_name} || error "GOVC CLEANUP FAILED!! Please manually delete any ${workload_cluster_name} workload cluster resources using vCenter Web UI"
+
+        exit 1
     fi
     sleep 5
 done
