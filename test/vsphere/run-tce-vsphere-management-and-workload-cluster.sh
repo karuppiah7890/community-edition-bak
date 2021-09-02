@@ -111,7 +111,7 @@ time tanzu cluster delete ${workload_cluster_name} -y || {
     exit 1
 }
 
-for (( i = 1 ; i <= 80 ; i++))
+for (( i = 1 ; i <= 120 ; i++))
 do
     echo "Waiting for workload cluster to get deleted..."
     num_of_clusters=$(tanzu cluster list -o json | jq 'length')
@@ -119,7 +119,7 @@ do
         echo "Workload cluster ${workload_cluster_name} successfully deleted"
         break
     fi
-    if [[ "$i" != 80 ]]; then
+    if [[ "$i" != 120 ]]; then
         echo "Timed out waiting for workload cluster ${workload_cluster_name} to get deleted"
         break
     fi
