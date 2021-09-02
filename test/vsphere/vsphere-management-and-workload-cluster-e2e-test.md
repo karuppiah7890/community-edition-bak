@@ -54,7 +54,7 @@ Our E2E tests use the jump host as a proxy for the above reasons. We use [`sshut
 
 ### Running the test
 
-The E2E test's starting point is a bash script - `test/vsphere/run-tce-vsphere-management-and-workload-cluster.sh`. This script can be invoked standalone, or one can use `Makefile` target `tce-vsphere-management-and-workload-cluster-e2e-test` to run the E2E tests like this `make tce-vsphere-management-and-workload-cluster-e2e-test`
+The E2E test's starting point is a bash script - `test/vsphere/run-tce-vsphere-management-and-workload-cluster.sh`. This script can be invoked standalone, or one can use `Makefile` target `vsphere-management-cluster-e2e-test` to run the E2E tests like this `make vsphere-management-cluster-e2e-test`
 
 The script gives meaningful errors when required parameters (envrionment variables) are missing
 
