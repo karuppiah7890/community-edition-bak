@@ -1,13 +1,49 @@
 name: E2E Test - vSphere Management Cluster
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  push:
+    branches:
+      - e2e-vsphere-management-cluster-trial
 
 jobs:
+  start-runner:
+    name: Start self-hosted EC2 runner
+    runs-on: ubuntu-latest
+    outputs:
+      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Download Dependencies
+        shell: bash
+        run: |
+          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            https://raw.githubusercontent.com/vmware-tanzu/community-edition/main/hack/ensure-dependencies.sh \
+            -o ensure-dependencies.sh
+          chmod +x ./ensure-dependencies.sh
+          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            https://raw.githubusercontent.com/vmware-tanzu/community-edition/main/hack/runner/setup.sh \
+            -o setup.sh
+          chmod +x ./setup.sh
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_CHECKS_ACCESS_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.RUNNER_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.RUNNER_AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-west-2
+        shell: bash
+        run: |
+          ./ensure-dependencies.sh
+          GITHUB_TOKEN=${GITHUB_TOKEN} AMI_ID=ami-0e264e3eabfba9c3d ./setup.sh
+          INSTANCE_ID=$(cat ./instanceid.txt)
+          echo "INSTANCE_ID: ${INSTANCE_ID}"
+          echo ::set-output name=ec2-instance-id::${INSTANCE_ID}
+          if [[ -f "./timedout.txt" ]]; then
+            exit 1
+          fi
   e2e-vsphere-management-cluster-test:
     name: E2E vSphere Management Cluster Test
-    runs-on: ubuntu-latest
+    needs: start-runner # required to start the e2e test when the runner is ready
+    runs-on: ${{ needs.start-runner.outputs.ec2-instance-id }} # run the job on the newly created runner
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -49,3 +85,33 @@ jobs:
           sudo sysctl net/netfilter/nf_conntrack_max=131072
 
           make vsphere-management-cluster-e2e-test
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-runner # required to get output from the start-runner job
+      - e2e-vsphere-management-cluster-test # required to wait when the e2e test is done
+    runs-on: ubuntu-latest
+    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    steps:
+      - name: Download Dependencies
+        shell: bash
+        run: |
+          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            https://raw.githubusercontent.com/vmware-tanzu/community-edition/main/hack/ensure-dependencies.sh \
+            -o ensure-dependencies.sh
+          chmod +x ./ensure-dependencies.sh
+          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            https://raw.githubusercontent.com/vmware-tanzu/community-edition/main/hack/runner/teardown.sh \
+            -o teardown.sh
+          chmod +x ./teardown.sh
+      - name: Stop EC2 runner
+        id: stop-ec2-runner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_CHECKS_ACCESS_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.RUNNER_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.RUNNER_AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-west-2
+        shell: bash
+        run: |
+          ./ensure-dependencies.sh
+          GITHUB_TOKEN=${GITHUB_TOKEN} INSTANCE_ID=${{ needs.start-runner.outputs.ec2-instance-id }} ./teardown.sh
