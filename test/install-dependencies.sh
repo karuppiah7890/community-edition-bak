@@ -5,9 +5,14 @@
 
 # This script installs dependencies needed for running build-tce.sh and deploy-tce.sh
 
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+TCE_REPO_PATH="${MY_DIR}"/..
+
+# shellcheck source=test/util/utils.sh
+source "${TCE_REPO_PATH}"/test/util/utils.sh
+
 BUILD_OS=$(uname -s)
 BUILD_ARCH=$(uname -m 2>/dev/null || echo Unknown)
-export BUILD_OS
 
 # Make sure docker is installed
 echo "Checking for Docker..."

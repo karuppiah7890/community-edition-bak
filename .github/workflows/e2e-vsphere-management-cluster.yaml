@@ -43,4 +43,6 @@ jobs:
 
           ./hack/ensure-dependencies.sh
 
+          DOCKER_HOST=unix:///run/user/1000/docker.sock
+
           make vsphere-management-cluster-e2e-test
