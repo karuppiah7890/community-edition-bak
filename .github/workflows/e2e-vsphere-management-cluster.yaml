@@ -6,63 +6,15 @@ on:
       - e2e-vsphere-management-cluster-trial
 
 jobs:
-  start-runner:
-    name: Start self-hosted EC2 runner
-    runs-on: ubuntu-latest
-    outputs:
-      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
-    steps:
-      - name: Download Dependencies
-        shell: bash
-        run: |
-          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            https://raw.githubusercontent.com/karuppiah7890/community-edition/e2e-vsphere-management-cluster-trial/hack/ensure-dependencies.sh \
-            -o ensure-dependencies.sh
-          chmod +x ./ensure-dependencies.sh
-          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            https://raw.githubusercontent.com/karuppiah7890/community-edition/e2e-vsphere-management-cluster-trial/hack/runner/setup.sh \
-            -o setup.sh
-          chmod +x ./setup.sh
-      - name: Start EC2 runner
-        id: start-ec2-runner
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_CHECKS_ACCESS_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.RUNNER_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.RUNNER_AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-west-2
-          INSTANCE_TYPE: t2.2xlarge
-          SECURITY_GROUP_ID: sg-c9f0c3f7
-          SUBNET_ID: subnet-3371e76e
-          SSH_KEY_NAME: default
-          AMI_ID: ami-00074967e558d8e2c
-        shell: bash
-        run: |
-          ./ensure-dependencies.sh
-          ./setup.sh
-          INSTANCE_ID=$(cat ./instanceid.txt)
-          echo "INSTANCE_ID: ${INSTANCE_ID}"
-          echo ::set-output name=ec2-instance-id::${INSTANCE_ID}
-          if [[ -f "./timedout.txt" ]]; then
-            exit 1
-          fi
   e2e-vsphere-management-cluster-test:
     name: E2E vSphere Management Cluster Test
-    needs: start-runner # required to start the e2e test when the runner is ready
-    runs-on: ${{ needs.start-runner.outputs.ec2-instance-id }} # run the job on the newly created runner
+    runs-on: ip-172-31-14-187
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
           go-version: "1.16"
         id: go
-
-      - name: Cleaning up GitHub Actions runner
-        run: |
-          df -h
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf "/usr/local/share/boost"
-          df -h
 
       - name: Check out code
         uses: actions/checkout@v1
@@ -90,34 +42,3 @@ jobs:
           sudo sysctl net/netfilter/nf_conntrack_max=131072
 
           make vsphere-management-cluster-e2e-test
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    needs:
-      - start-runner # required to get output from the start-runner job
-      - e2e-vsphere-management-cluster-test # required to wait when the e2e test is done
-    runs-on: ubuntu-latest
-    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
-    steps:
-      - name: Download Dependencies
-        shell: bash
-        run: |
-          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            https://raw.githubusercontent.com/karuppiah7890/community-edition/e2e-vsphere-management-cluster-trial/hack/ensure-dependencies.sh \
-            -o ensure-dependencies.sh
-          chmod +x ./ensure-dependencies.sh
-          curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            https://raw.githubusercontent.com/karuppiah7890/community-edition/e2e-vsphere-management-cluster-trial/hack/runner/teardown.sh \
-            -o teardown.sh
-          chmod +x ./teardown.sh
-      - name: Stop EC2 runner
-        id: stop-ec2-runner
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_CHECKS_ACCESS_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.RUNNER_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.RUNNER_AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-west-2
-          INSTANCE_ID: ${{ needs.start-runner.outputs.ec2-instance-id }}
-        shell: bash
-        run: |
-          ./ensure-dependencies.sh
-          ./teardown.sh
