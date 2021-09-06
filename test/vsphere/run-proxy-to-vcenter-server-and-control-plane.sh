@@ -53,4 +53,5 @@ chmod 400 "${JUMPER_SSH_PRIVATE_KEY_LOCATION}"
 
 printenv 'JUMPER_SSH_KNOWN_HOSTS_ENTRY' >> ${ssh_known_hosts_file}
 
-sshuttle --daemon -vvvvvvvv --remote "${JUMPER_SSH_HOST_NAME}" "${subnets_needing_proxy[@]}"
+# sshuttle --daemon -vvvvvvvv --remote "${JUMPER_SSH_HOST_NAME}" "${subnets_needing_proxy[@]}"
+ssh "${JUMPER_SSH_HOST_NAME}"
