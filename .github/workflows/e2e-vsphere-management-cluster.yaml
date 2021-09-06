@@ -16,11 +16,11 @@ jobs:
         shell: bash
         run: |
           curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            https://raw.githubusercontent.com/vmware-tanzu/community-edition/main/hack/ensure-dependencies.sh \
+            https://raw.githubusercontent.com/karuppiah7890/community-edition/e2e-vsphere-management-cluster-trial/hack/ensure-dependencies.sh \
             -o ensure-dependencies.sh
           chmod +x ./ensure-dependencies.sh
           curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            https://raw.githubusercontent.com/vmware-tanzu/community-edition/main/hack/runner/setup.sh \
+            https://raw.githubusercontent.com/karuppiah7890/community-edition/e2e-vsphere-management-cluster-trial/hack/runner/setup.sh \
             -o setup.sh
           chmod +x ./setup.sh
       - name: Start EC2 runner
@@ -30,10 +30,15 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.RUNNER_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.RUNNER_AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-2
+          INSTANCE_TYPE: t2.2xlarge
+          SECURITY_GROUP_ID: sg-c9f0c3f7
+          SUBNET_ID: subnet-3371e76e
+          SSH_KEY_NAME: default
+          AMI_ID: ami-00074967e558d8e2c
         shell: bash
         run: |
           ./ensure-dependencies.sh
-          GITHUB_TOKEN=${GITHUB_TOKEN} AMI_ID=ami-0e264e3eabfba9c3d ./setup.sh
+          ./setup.sh
           INSTANCE_ID=$(cat ./instanceid.txt)
           echo "INSTANCE_ID: ${INSTANCE_ID}"
           echo ::set-output name=ec2-instance-id::${INSTANCE_ID}
@@ -97,11 +102,11 @@ jobs:
         shell: bash
         run: |
           curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            https://raw.githubusercontent.com/vmware-tanzu/community-edition/main/hack/ensure-dependencies.sh \
+            https://raw.githubusercontent.com/karuppiah7890/community-edition/e2e-vsphere-management-cluster-trial/hack/ensure-dependencies.sh \
             -o ensure-dependencies.sh
           chmod +x ./ensure-dependencies.sh
           curl --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-            https://raw.githubusercontent.com/vmware-tanzu/community-edition/main/hack/runner/teardown.sh \
+            https://raw.githubusercontent.com/karuppiah7890/community-edition/e2e-vsphere-management-cluster-trial/hack/runner/teardown.sh \
             -o teardown.sh
           chmod +x ./teardown.sh
       - name: Stop EC2 runner
@@ -111,7 +116,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.RUNNER_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.RUNNER_AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-2
+          INSTANCE_ID: ${{ needs.start-runner.outputs.ec2-instance-id }}
         shell: bash
         run: |
           ./ensure-dependencies.sh
-          GITHUB_TOKEN=${GITHUB_TOKEN} INSTANCE_ID=${{ needs.start-runner.outputs.ec2-instance-id }} ./teardown.sh
+          ./teardown.sh

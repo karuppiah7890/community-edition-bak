@@ -17,7 +17,7 @@ if [[ -z "${INSTANCE_ID}" ]]; then
     exit 1
 fi
 
-RUNNER_ID=$(curl -H "Accept: application/vnd.github.v3+json" -H "authorization: Bearer ${GITHUB_TOKEN}" https://api.github.com/repos/vmware-tanzu/community-edition/actions/runners | jq -r ".runners[] | select(.name==\"${INSTANCE_ID}\") | .id")
-curl -X DELETE -H "Accept: application/vnd.github.v3+json" -H "authorization: Bearer ${GITHUB_TOKEN}" "https://api.github.com/repos/vmware-tanzu/community-edition/actions/runners/${RUNNER_ID}"
-aws ec2 terminate-instances --instance-ids "${INSTANCE_ID}" --region us-west-2 > /dev/null 2>&1
-aws ec2 wait instance-terminated --instance-ids "${INSTANCE_ID}" --region us-west-2
+RUNNER_ID=$(curl -H "Accept: application/vnd.github.v3+json" -H "authorization: Bearer ${GITHUB_TOKEN}" https://api.github.com/repos/karuppiah7890/community-edition/actions/runners | jq -r ".runners[] | select(.name==\"${INSTANCE_ID}\") | .id")
+curl -X DELETE -H "Accept: application/vnd.github.v3+json" -H "authorization: Bearer ${GITHUB_TOKEN}" "https://api.github.com/repos/karuppiah7890/community-edition/actions/runners/${RUNNER_ID}"
+aws ec2 terminate-instances --instance-ids "${INSTANCE_ID}" --region ${AWS_REGION} > /dev/null 2>&1
+aws ec2 wait instance-terminated --instance-ids "${INSTANCE_ID}" --region ${AWS_REGION}
