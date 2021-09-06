@@ -41,8 +41,4 @@ jobs:
           # Workaround for issue https://github.com/kubernetes-sigs/kind/issues/2240
           sudo sysctl net/netfilter/nf_conntrack_max=131072
 
-          ./hack/ensure-dependencies.sh
-
-          DOCKER_HOST=unix:///run/user/1000/docker.sock
-
           make vsphere-management-cluster-e2e-test
