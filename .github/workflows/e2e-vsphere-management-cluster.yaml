@@ -39,6 +39,6 @@ jobs:
           JUMPER_SSH_KNOWN_HOSTS_ENTRY: ${{ secrets.JUMPER_SSH_KNOWN_HOSTS_ENTRY }}
         run: |
           # Workaround for issue https://github.com/kubernetes-sigs/kind/issues/2240
-          sudo sysctl net/netfilter/nf_conntrack_max=131072
+          # sudo sysctl net/netfilter/nf_conntrack_max=131072
 
           make vsphere-management-cluster-e2e-test
