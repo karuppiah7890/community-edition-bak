@@ -3,7 +3,8 @@ name: vCenter proxy check
 on:
   push:
     branches:
-      - e2e-vsphere-management-cluster-trial
+      # - e2e-vsphere-management-cluster-trial
+      - main
 
 jobs:
   vcenter-proxy-check:
