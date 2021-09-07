@@ -33,6 +33,7 @@ jobs:
           JUMPER_SSH_KNOWN_HOSTS_ENTRY: ${{ secrets.JUMPER_SSH_KNOWN_HOSTS_ENTRY }}
         run: |
           set -x
+          set -e
 
           declare -a required_env_vars=("MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT"
           "WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT"
@@ -58,14 +59,10 @@ jobs:
           
           ./test/vsphere/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
-          # curl -I -k https://"${VSPHERE_SERVER}"/ui
+          curl -I -k -s https://${VSPHERE_SERVER}/ui
 
-          curl -I -k https://${VSPHERE_SERVER}/ui
+          docker run --rm curlimages/curl curl -I -k -s https://${VSPHERE_SERVER}/ui || true
 
-          # docker run --rm -it curlimages/curl curl -I -k https://"${VSPHERE_SERVER}"/ui
+          docker run --network bridge --rm curlimages/curl curl -I -k -s https://${VSPHERE_SERVER}/ui || true
 
-          # docker run --network bridge --rm -it curlimages/curl curl -I -k https://"${VSPHERE_SERVER}"/ui
-
-          docker run --rm -it curlimages/curl curl -I -k https://${VSPHERE_SERVER}/ui
-
-          docker run --network bridge --rm -it curlimages/curl curl -I -k https://${VSPHERE_SERVER}/ui
+          docker run --network host --rm curlimages/curl curl -I -k -s https://${VSPHERE_SERVER}/ui || true
