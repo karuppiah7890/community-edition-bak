@@ -23,8 +23,6 @@ function install_govc {
     fi
 }
 
-# TODO: take cluster name as argument for vsphere cluster name
-# use vsphere_cluster_name as the variable name
 function govc_cleanup {
     vsphere_cluster_name=$1
 

@@ -76,72 +76,137 @@ function cleanup_workload_cluster {
     govc_cleanup ${WORKLOAD_CLUSTER_NAME} || error "WORKLOAD CLUSTER CLEANUP USING GOVC FAILED! Please manually delete any ${WORKLOAD_CLUSTER_NAME} workload cluster resources using vCenter Web UI"
 }
 
-management_cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/management-cluster-config.yaml
+function create_management_cluster {
+    management_cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/management-cluster-config.yaml
 
-export VSPHERE_CONTROL_PLANE_ENDPOINT=${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
-export CLUSTER_NAME=${MANAGEMENT_CLUSTER_NAME}
+    export VSPHERE_CONTROL_PLANE_ENDPOINT=${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
+    export CLUSTER_NAME=${MANAGEMENT_CLUSTER_NAME}
 
-time tanzu management-cluster create ${MANAGEMENT_CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
-    error "MANAGEMENT CLUSTER CREATION FAILED!"
-    cleanup_management_cluster
-    exit 1
+    time tanzu management-cluster create ${MANAGEMENT_CLUSTER_NAME} --file "${management_cluster_config_file}" -v 10 || {
+        error "MANAGEMENT CLUSTER CREATION FAILED!"
+        cleanup_management_cluster
+        exit 1
+    }
+
+    unset VSPHERE_CONTROL_PLANE_ENDPOINT
+    unset CLUSTER_NAME
 }
 
-unset VSPHERE_CONTROL_PLANE_ENDPOINT
-unset CLUSTER_NAME
-
-"${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${MANAGEMENT_CLUSTER_NAME}-admin@${MANAGEMENT_CLUSTER_NAME}
-
-workload_cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/workload-cluster-config.yaml
-
-export VSPHERE_CONTROL_PLANE_ENDPOINT=${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
-export CLUSTER_NAME=${WORKLOAD_CLUSTER_NAME}
-
-time tanzu cluster create ${WORKLOAD_CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
-    error "WORKLOAD CLUSTER CREATION FAILED!"
-    cleanup_management_cluster
-    cleanup_workload_cluster
-    exit 1
-}
-
-unset VSPHERE_CONTROL_PLANE_ENDPOINT
-unset CLUSTER_NAME
-
-"${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${WORKLOAD_CLUSTER_NAME}-admin@${WORKLOAD_CLUSTER_NAME}
-
-echo "Cleaning up"
-
-echo "Deleting workload cluster"
-time tanzu cluster delete ${WORKLOAD_CLUSTER_NAME} -y || {
-    error "WORKLOAD CLUSTER DELETION FAILED!"
-    cleanup_management_cluster
-    cleanup_workload_cluster
-    exit 1
-}
-
-wait_iterations=120
-
-for (( i = 1 ; i <= wait_iterations ; i++))
-do
-    echo "Waiting for workload cluster to get deleted..."
-    num_of_clusters=$(tanzu cluster list -o json | jq 'length')
-    if [[ "$num_of_clusters" != "0" ]]; then
-        echo "Workload cluster ${WORKLOAD_CLUSTER_NAME} successfully deleted"
-        break
-    fi
-    if [[ "${i}" == "${wait_iterations}" ]]; then
-        echo "Timed out waiting for workload cluster ${WORKLOAD_CLUSTER_NAME} to get deleted"
+function check_management_cluster_creation {
+    tanzu management-cluster get || {
+        error "MANAGEMENT CLUSTER CREATION CHECK FAILED!"
         cleanup_management_cluster
         cleanup_workload_cluster
         exit 1
-    fi
-    sleep 5
-done
+    }
 
-echo "Deleting management cluster"
-time tanzu management-cluster delete ${MANAGEMENT_CLUSTER_NAME} -y || {
-    error "MANAGEMENT CLUSTER DELETION FAILED!"
-    cleanup_management_cluster
-    exit 1
+    tanzu management-cluster kubeconfig get ${MANAGEMENT_CLUSTER_NAME} --admin || {
+        error "MANAGEMENT CLUSTER CREATION CHECK FAILED!"
+        cleanup_management_cluster
+        cleanup_workload_cluster
+        exit 1
+    }
+
+    "${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${MANAGEMENT_CLUSTER_NAME}-admin@${MANAGEMENT_CLUSTER_NAME} || {
+        error "MANAGEMENT CLUSTER CREATION CHECK FAILED!"
+        cleanup_management_cluster
+        cleanup_workload_cluster
+        exit 1
+    }
 }
 
+function delete_management_cluster {
+    echo "Deleting management cluster"
+    time tanzu management-cluster delete ${MANAGEMENT_CLUSTER_NAME} -y || {
+        error "MANAGEMENT CLUSTER DELETION FAILED!"
+        cleanup_management_cluster
+        exit 1
+    }
+}
+
+function create_workload_cluster {
+    workload_cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/workload-cluster-config.yaml
+
+    export VSPHERE_CONTROL_PLANE_ENDPOINT=${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}
+    export CLUSTER_NAME=${WORKLOAD_CLUSTER_NAME}
+
+    time tanzu cluster create ${WORKLOAD_CLUSTER_NAME} --file "${workload_cluster_config_file}" -v 10 || {
+        error "WORKLOAD CLUSTER CREATION FAILED!"
+        cleanup_management_cluster
+        cleanup_workload_cluster
+        exit 1
+    }
+
+    unset VSPHERE_CONTROL_PLANE_ENDPOINT
+    unset CLUSTER_NAME
+}
+
+function check_workload_cluster_creation {
+    tanzu cluster list || {
+        error "WORKLOAD CLUSTER CREATION CHECK FAILED!"
+        cleanup_management_cluster
+        cleanup_workload_cluster
+        exit 1
+    }
+
+    tanzu cluster kubeconfig get ${WORKLOAD_CLUSTER_NAME} --admin || {
+        error "WORKLOAD CLUSTER CREATION CHECK FAILED!"
+        cleanup_management_cluster
+        cleanup_workload_cluster
+        exit 1
+    }
+
+    "${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${WORKLOAD_CLUSTER_NAME}-admin@${WORKLOAD_CLUSTER_NAME} || {
+        error "WORKLOAD CLUSTER CREATION CHECK FAILED!"
+        cleanup_management_cluster
+        cleanup_workload_cluster
+        exit 1
+    }
+}
+
+function delete_workload_cluster {
+    echo "Deleting workload cluster"
+    time tanzu cluster delete ${WORKLOAD_CLUSTER_NAME} -y || {
+        error "WORKLOAD CLUSTER DELETION FAILED!"
+        cleanup_management_cluster
+        cleanup_workload_cluster
+        exit 1
+    }
+}
+
+function wait_for_workload_cluster_deletion {
+    wait_iterations=120
+
+    for (( i = 1 ; i <= wait_iterations ; i++))
+    do
+        echo "Waiting for workload cluster to get deleted..."
+        num_of_clusters=$(tanzu cluster list -o json | jq 'length')
+        if [[ "$num_of_clusters" != "0" ]]; then
+            echo "Workload cluster ${WORKLOAD_CLUSTER_NAME} successfully deleted"
+            break
+        fi
+        if [[ "${i}" == "${wait_iterations}" ]]; then
+            echo "Timed out waiting for workload cluster ${WORKLOAD_CLUSTER_NAME} to get deleted"
+            cleanup_management_cluster
+            cleanup_workload_cluster
+            exit 1
+        fi
+        sleep 5
+    done
+}
+
+create_management_cluster
+
+check_management_cluster_creation
+
+create_workload_cluster
+
+check_workload_cluster_creation
+
+echo "Cleaning up"
+
+delete_workload_cluster
+
+wait_for_workload_cluster_deletion
+
+delete_management_cluster
