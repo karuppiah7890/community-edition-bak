@@ -1,8 +1,9 @@
 name: E2E Test - vSphere Management Cluster
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  push:
+    branches:
+      - e2e-vsphere-management-cluster-trial-2
 
 jobs:
   e2e-vsphere-management-cluster-test:
