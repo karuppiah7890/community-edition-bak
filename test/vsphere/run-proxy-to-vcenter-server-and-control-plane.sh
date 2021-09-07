@@ -55,3 +55,7 @@ printenv 'JUMPER_SSH_KNOWN_HOSTS_ENTRY' >> ${ssh_known_hosts_file}
 
 sshuttle --daemon -vvvvvvvv --remote "${JUMPER_SSH_HOST_NAME}" "${subnets_needing_proxy[@]}"
 # ssh "${JUMPER_SSH_HOST_NAME}"
+
+ls -al
+
+trap '{ cat /var/log/syslog; }' EXIT
