@@ -52,6 +52,8 @@ jobs:
 
           trap '{ ./test/vsphere/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
+          export PROXY_CONFIG_NAME="dummy"
+          
           ./test/vsphere/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
           curl -I -k https://"${VSPHERE_SERVER}"/ui
