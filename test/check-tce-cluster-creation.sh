@@ -19,27 +19,22 @@ if [ -z "$kube_context" ]; then
     exit 1
 fi
 
-kubectl config use-context "$kube_context" || {
-    error "CONTEXT SWITCH TO CLUSTER FAILED!"
-    exit 1
-}
-
-kubectl wait --for=condition=ready pod --all --all-namespaces --timeout=600s || {
+kubectl --context "$kube_context" wait --for=condition=ready pod --all --all-namespaces --timeout=600s || {
     error "TIMED OUT WAITING FOR ALL PODS TO BE UP!"
     exit 1
 }
 
-kubectl cluster-info || {
+kubectl --context "$kube_context" cluster-info || {
     error "ERROR GETTING CLUSTER INFO!"
     exit 1
 }
 
-kubectl get nodes || {
+kubectl --context "$kube_context" get nodes || {
     error "ERROR GETTING CLUSTER NODES!"
     exit 1
 }
 
-kubectl get pods -A || {
+kubectl --context "$kube_context" get pods -A || {
     error "ERROR GETTING ALL PODS IN CLUSTER!"
     exit 1
 }
