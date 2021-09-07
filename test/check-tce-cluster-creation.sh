@@ -7,7 +7,7 @@ set -e
 set -x
 
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-TCE_REPO_PATH="${MY_DIR}"/../..
+TCE_REPO_PATH="${MY_DIR}"/..
 
 # shellcheck source=test/util/utils.sh
 source "${TCE_REPO_PATH}"/test/util/utils.sh
