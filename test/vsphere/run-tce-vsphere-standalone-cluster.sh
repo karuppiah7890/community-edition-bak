@@ -55,7 +55,7 @@ tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" 
     exit 1
 }
 
-"${TCE_REPO_PATH}"/test/docker/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
+"${TCE_REPO_PATH}"/test/check-tce-cluster-creation.sh ${CLUSTER_NAME}-admin@${CLUSTER_NAME}
 
 echo "Cleaning up"
 echo "Deleting standalone cluster"
