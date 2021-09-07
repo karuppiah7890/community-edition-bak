@@ -181,7 +181,7 @@ function wait_for_workload_cluster_deletion {
     do
         echo "Waiting for workload cluster to get deleted..."
         num_of_clusters=$(tanzu cluster list -o json | jq 'length')
-        if [[ "$num_of_clusters" != "0" ]]; then
+        if [[ "$num_of_clusters" == "0" ]]; then
             echo "Workload cluster ${WORKLOAD_CLUSTER_NAME} successfully deleted"
             break
         fi
