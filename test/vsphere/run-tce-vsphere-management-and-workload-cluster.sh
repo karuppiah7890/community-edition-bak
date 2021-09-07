@@ -60,11 +60,11 @@ random_id="${RANDOM}"
 export MANAGEMENT_CLUSTER_NAME="test-management-cluster-${random_id}"
 export WORKLOAD_CLUSTER_NAME="test-workload-cluster-${random_id}"
 
-export PROXY_CONFIG_NAME="${MANAGEMENT_CLUSTER_NAME}-and-${WORKLOAD_CLUSTER_NAME}"
+# export PROXY_CONFIG_NAME="${MANAGEMENT_CLUSTER_NAME}-and-${WORKLOAD_CLUSTER_NAME}"
 
-"${TCE_REPO_PATH}"/test/vsphere/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
+# "${TCE_REPO_PATH}"/test/vsphere/run-proxy-to-vcenter-server-and-control-plane.sh "${VSPHERE_SERVER}"/32 "${MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32 "${WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT}"/32
 
-trap '{ "${TCE_REPO_PATH}"/test/vsphere/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
+# trap '{ "${TCE_REPO_PATH}"/test/vsphere/stop-proxy-to-vcenter-server-and-control-plane.sh; }' EXIT
 
 function cleanup_management_cluster {
     echo "Using govc to cleanup ${MANAGEMENT_CLUSTER_NAME} management cluster resources"
