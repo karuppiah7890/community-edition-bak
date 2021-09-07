@@ -1,8 +1,9 @@
 name: E2E Test - vSphere Standalone Cluster
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  push:
+    branches:
+      - e2e-vsphere-management-cluster-trial-3-with-stable-binary
 
 jobs:
   e2e-vsphere-standalone-cluster-test:

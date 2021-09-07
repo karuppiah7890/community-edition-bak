@@ -46,7 +46,7 @@ source "${TCE_REPO_PATH}"/test/util/utils.sh
 source "${TCE_REPO_PATH}"/test/vsphere/cleanup-utils.sh
 
 "${TCE_REPO_PATH}"/test/install-dependencies.sh || { error "Dependency installation failed!"; exit 1; }
-"${TCE_REPO_PATH}"/test/build-tce.sh || { error "TCE installation failed!"; exit 1; }
+"${TCE_REPO_PATH}"/test/fetch-and-install-tce-release.sh v0.7.0 || { error "TCE installation failed!"; exit 1; }
 
 random_id="${RANDOM}"
 
