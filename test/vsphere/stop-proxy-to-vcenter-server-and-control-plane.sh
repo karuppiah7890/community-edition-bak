@@ -6,6 +6,6 @@
 set -e
 set -x
 
-kill "$(cat ./sshuttle.pid)";
+# kill "$(cat ./sshuttle.pid)";
 
-# logout
+logout
