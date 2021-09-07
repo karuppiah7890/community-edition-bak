@@ -49,7 +49,7 @@ export CLUSTER_NAME="test-standalone-cluster-${RANDOM}"
 
 cluster_config_file="${TCE_REPO_PATH}"/test/vsphere/cluster-config.yaml
 
-tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
+time tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" -v 10 || {
     error "STANDALONE CLUSTER CREATION FAILED!"
     govc_cleanup ${CLUSTER_NAME}
     exit 1
@@ -60,7 +60,7 @@ tanzu standalone-cluster create ${CLUSTER_NAME} --file "${cluster_config_file}" 
 echo "Cleaning up"
 echo "Deleting standalone cluster"
 
-tanzu standalone-cluster delete ${CLUSTER_NAME} -y || {
+time tanzu standalone-cluster delete ${CLUSTER_NAME} -y || {
     error "STANDALONE CLUSTER DELETION FAILED!"
     govc_cleanup ${CLUSTER_NAME}
     exit 1
