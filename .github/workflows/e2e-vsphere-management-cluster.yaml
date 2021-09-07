@@ -3,7 +3,8 @@ name: E2E Test - vSphere Management Cluster
 on:
   push:
     branches:
-      - e2e-vsphere-management-cluster-trial
+      - main
+      # - e2e-vsphere-management-cluster-trial
 
 jobs:
   e2e-vsphere-management-cluster-test:
