@@ -33,7 +33,6 @@ jobs:
           JUMPER_SSH_KNOWN_HOSTS_ENTRY: ${{ secrets.JUMPER_SSH_KNOWN_HOSTS_ENTRY }}
         run: |
           set -x
-          set -e
 
           declare -a required_env_vars=("MANAGEMENT_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT"
           "WORKLOAD_CLUSTER_VSPHERE_CONTROL_PLANE_ENDPOINT"
