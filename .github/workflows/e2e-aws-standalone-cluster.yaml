@@ -3,7 +3,7 @@ name: E2E Test - AWS Standalone Cluster
 on:
   push:
     branches:
-      - main
+      - measure-time-taken-for-aws-cluster-creation-trial
     paths:
       - "**.go"
       - "cli/cmd/plugin/**/go.mod"
