@@ -82,8 +82,8 @@ function delete_cluster_or_cleanup {
 }
 
 function create_standalone_cluster {
-    echo "Bootstrapping TCE standalone cluster on AWS..."
-    tanzu standalone-cluster create "${CLUSTER_NAME}" -f "${TCE_REPO_PATH}"/test/aws/cluster-config.yaml || {
+    echo "Bootstrapping TCE standalone cluster on Azure..."
+    tanzu standalone-cluster create "${CLUSTER_NAME}" -f "${TCE_REPO_PATH}"/test/azure/cluster-config.yaml || {
         error "STANDALONE CLUSTER CREATION FAILED!";
         return 1;
     }
