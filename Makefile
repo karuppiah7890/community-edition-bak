@@ -356,7 +356,7 @@ aws-standalone-cluster-e2e-test:
 
 # Azure Standalone Cluster E2E Test
 azure-standalone-cluster-e2e-test:
-	test/azure/deploy-tce-standalone.sh
+	test/azure/deploy-standalone-cluster.sh
 
 # TCE Docker Standalone Cluster E2E Test
 tce-docker-standalone-cluster-e2e-test:
