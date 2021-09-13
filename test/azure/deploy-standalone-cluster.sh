@@ -45,7 +45,7 @@ function az_docker {
         --volume ${HOME}:/home/az \
         --env HOME=/home/az \
         --rm --interactive --tty \
-        mcr.microsoft.com/azure-cli "$@"
+        mcr.microsoft.com/azure-cli az "$@"
 }
 
 function azure_cluster_cleanup {
@@ -56,7 +56,7 @@ function azure_cluster_cleanup {
 
     az_docker account set --subscription "${AZURE_SUBSCRIPTION_ID}"
 
-    az_docker group delete --name "${name}" --yes
+    az_docker group delete --name "${AZURE_RESOURCE_GROUP}" --yes
 }
 
 function delete_cluster {
