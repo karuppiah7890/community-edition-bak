@@ -34,6 +34,12 @@ source "${TCE_REPO_PATH}"/test/util/utils.sh
 export CLUSTER_NAME="test${RANDOM}"
 echo "Setting CLUSTER_NAME to ${CLUSTER_NAME}..."
 
+export AZURE_RESOURCE_GROUP="${CLUSTER_NAME}-resource-group"
+export AZURE_VNET_RESOURCE_GROUP="${AZURE_RESOURCE_GROUP}"
+export AZURE_VNET_NAME="${CLUSTER_NAME}-vnet"
+export AZURE_CONTROL_PLANE_SUBNET_NAME="${CLUSTER_NAME}-control-plane-subnet"
+export AZURE_NODE_SUBNET_NAME="${CLUSTER_NAME}-worker-node-subnet"
+
 function az_docker {
     docker run --user $(id -u):$(id -g) \
         --volume ${HOME}:/home/az \
