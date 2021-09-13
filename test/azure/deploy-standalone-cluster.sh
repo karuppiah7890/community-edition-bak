@@ -87,6 +87,10 @@ echo "Installing packages on TCE..."
 "${TCE_REPO_PATH}"/test/add-tce-package-repo.sh || { error "PACKAGE REPOSITORY INSTALLATION FAILED!"; delete_cluster; exit 1; }
 tanzu package available list || { error "UNEXPECTED FAILURE OCCURRED!"; delete_cluster; exit 1; }
 
+# Run e2e-test
+echo "Starting Gatekeeper test..."
+"${TCE_REPO_PATH}"/test/aws/e2e-test.sh || { error "TEST FAILED!"; delete_cluster "Deleting standalone cluster"; exit 1; }
+
 echo "Cleaning up..."
 delete_cluster || {
     error "STANDALONE CLUSTER DELETION FAILED!";
