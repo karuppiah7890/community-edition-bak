@@ -3,7 +3,7 @@ name: E2E Test - Azure Standalone Cluster
 on:
   push:
     branches:
-      - main
+      - azure-standalone-cluster-e2e-pipeline-trial
     paths:
       - "**.go"
       - "cli/cmd/plugin/**/go.mod"
