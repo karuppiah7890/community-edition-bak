@@ -144,6 +144,30 @@ function check_workload_cluster_creation {
     }
 }
 
+function add_package_repo {
+    echo "Installing package repository on TCE..."
+    "${TCE_REPO_PATH}"/test/add-tce-package-repo.sh || {
+        error "PACKAGE REPOSITORY INSTALLATION FAILED!";
+        return 1;
+    }
+}
+
+function list_packages {
+    echo "Listing available packages..."
+    tanzu package available list || {
+        error "LISTING PACKAGES FAILED";
+        return 1;
+    }
+}
+
+function test_gate_keeper_package {
+    echo "Starting Gatekeeper test..."
+    "${TCE_REPO_PATH}"/test/aws/e2e-test.sh || {
+        error "GATEKEEPER PACKAGE TEST FAILED!";
+        return 1;
+    }
+}
+
 function delete_workload_cluster {
     echo "Deleting workload cluster"
     time tanzu cluster delete ${WORKLOAD_CLUSTER_NAME} -y || {
@@ -188,6 +212,21 @@ create_workload_cluster || {
 }
 
 check_workload_cluster_creation || {
+    cleanup_management_and_workload_cluster
+    exit 1
+}
+
+add_package_repo || {
+    cleanup_management_and_workload_cluster
+    exit 1
+}
+
+list_packages || {
+    cleanup_management_and_workload_cluster
+    exit 1
+}
+
+test_gate_keeper_package || {
     cleanup_management_and_workload_cluster
     exit 1
 }
