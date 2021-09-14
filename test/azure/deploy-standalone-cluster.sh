@@ -28,12 +28,7 @@ TCE_REPO_PATH="${MY_DIR}"/../..
 source "${TCE_REPO_PATH}"/test/util/utils.sh
 "${TCE_REPO_PATH}"/test/install-dependencies.sh || { error "Dependency installation failed!"; exit 1; }
 # "${TCE_REPO_PATH}"/test/build-tce.sh || { error "TCE installation failed!"; exit 1; }
-wget https://storage.googleapis.com/tce-cli-plugins-staging/build-daily/127/tce-linux-amd64-v0.8.0-dev.3.tar.gz \
-    -O "${TCE_REPO_PATH}"/tce-linux-amd64-v0.8.0-dev.3.tar.gz
-
-tar -xvzf "${TCE_REPO_PATH}"/tce-linux-amd64-v0.8.0-dev.3.tar.gz --directory "${TCE_REPO_PATH}"
-
-"${TCE_REPO_PATH}"/tce-linux-amd64-v0.8.0-dev.3/install.sh
+"${TCE_REPO_PATH}"/test/fetch-and-install-tce-release.sh v0.8.0-rc.2
 
 export CLUSTER_NAME="test${RANDOM}"
 echo "Setting CLUSTER_NAME to ${CLUSTER_NAME}..."
