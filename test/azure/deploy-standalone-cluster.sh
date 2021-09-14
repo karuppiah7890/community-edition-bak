@@ -116,9 +116,14 @@ function azure_cluster_cleanup {
     }
 }
 
+function collect_diagnostics_data {
+    tanzu diagnostics collect --output-dir "${TCE_REPO_PATH}"/test/azure || true
+}
+
 function delete_cluster_or_cleanup {
     echo "Deleting standalone cluster"
     time tanzu standalone-cluster delete ${CLUSTER_NAME} -y || {
+        collect_diagnostics_data
         error "STANDALONE CLUSTER DELETION FAILED!";
         azure_cluster_cleanup
         return 1
@@ -170,28 +175,33 @@ function test_gate_keeper_package {
 accept_vm_image_terms || exit 1
 
 create_standalone_cluster || {
+    collect_diagnostics_data
     delete_kind_cluster
     azure_cluster_cleanup
     exit 1
 }
 
 wait_for_pods || {
+    collect_diagnostics_data
     delete_cluster_or_cleanup
     exit 1
 }
 
 
 add_package_repo || {
+    collect_diagnostics_data
     delete_cluster_or_cleanup
     exit 1
 }
 
 list_packages || {
+    collect_diagnostics_data
     delete_cluster_or_cleanup
     exit 1
 }
 
 test_gate_keeper_package || {
+    collect_diagnostics_data
     delete_cluster_or_cleanup
     exit 1
 }
