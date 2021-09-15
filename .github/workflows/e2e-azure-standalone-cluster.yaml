@@ -52,4 +52,4 @@ jobs:
         if: ${{ always() }}
         with:
           name: tanzu-diagnostics-data
-          path: test/azure/*.tar.gz
+          path: "*.tar.gz"

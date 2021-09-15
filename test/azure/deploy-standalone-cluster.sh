@@ -112,7 +112,8 @@ function azure_cluster_cleanup {
 }
 
 function collect_diagnostics_data {
-    tanzu diagnostics collect --output-dir "${TCE_REPO_PATH}"/test/azure || true
+    tanzu diagnostics collect --output-dir "${TCE_REPO_PATH}"/test/azure \
+        --workload-cluster-infra azure --workload-cluster-name ${CLUSTER_NAME} || true
 }
 
 function delete_cluster_or_cleanup {
