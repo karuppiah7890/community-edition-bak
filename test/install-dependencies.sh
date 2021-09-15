@@ -91,6 +91,7 @@ if [[ -z "$(command -v aws-nuke)" ]]; then
         wget -q https://github.com/rebuy-de/aws-nuke/releases/download/v2.15.0/aws-nuke-v2.15.0-linux-amd64.tar.gz
 		tar xvzf aws-nuke-v2.15.0-linux-amd64.tar.gz && mv aws-nuke-v2.15.0-linux-amd64 aws-nuke
 		sudo mv aws-nuke /usr/local/bin/
+        rm -rfv aws-nuke-v2.15.0-linux-amd64.tar.gz
     elif [[ "$BUILD_OS" == "Darwin" ]]; then
         echo "Please install aws-nuke"
         exit 1
