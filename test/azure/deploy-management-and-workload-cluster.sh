@@ -148,7 +148,7 @@ function create_workload_cluster {
 }
 
 function check_workload_cluster_creation {
-    tanzu cluster list || {
+    tanzu cluster list | grep "${WORKLOAD_CLUSTER_NAME}" | grep running || {
         error "WORKLOAD CLUSTER CREATION CHECK FAILED!"
         return 1
     }
