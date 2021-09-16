@@ -3,7 +3,7 @@ name: E2E Test - Azure Management and Workload Cluster
 on:
   push:
     branches:
-      - main
+      - azure-management-and-workload-cluster-e2e-trial
     paths:
       - "**.go"
       - "cli/cmd/plugin/**/go.mod"
@@ -15,7 +15,7 @@ on:
 jobs:
   e2e-azure-management-and-workload-test:
     name: E2E Azure Management and Workload Cluster Test
-    runs-on: ubuntu-latest
+    runs-on: ec2
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -23,13 +23,13 @@ jobs:
           go-version: "1.16"
         id: go
 
-      - name: Cleaning up Github Actions runner
-        run: |
-          df -h
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf "/usr/local/share/boost"
-          df -h
+      # - name: Cleaning up Github Actions runner
+      #   run: |
+      #     df -h
+      #     sudo rm -rf /usr/local/lib/android
+      #     sudo rm -rf /usr/share/dotnet
+      #     sudo rm -rf "/usr/local/share/boost"
+      #     df -h
 
       - name: Check out code
         uses: actions/checkout@v1
