@@ -132,7 +132,7 @@ function delete_management_cluster {
 
 function create_workload_cluster {
     echo "Creating workload cluster on Azure..."
-    export CLUSTER_NAME="${MANAGEMENT_CLUSTER_NAME}"
+    export CLUSTER_NAME="${WORKLOAD_CLUSTER_NAME}"
     set_azure_env_vars
 
     workload_cluster_config_file="${TCE_REPO_PATH}"/test/azure/cluster-config.yaml
