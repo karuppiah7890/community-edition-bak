@@ -61,7 +61,7 @@ function cleanup_workload_cluster {
     error "Using azure CLI to cleanup ${WORKLOAD_CLUSTER_NAME} workload cluster resources"
     export CLUSTER_NAME="${WORKLOAD_CLUSTER_NAME}"
     set_azure_env_vars
-    azure_cluster_cleanup ${WORKLOAD_CLUSTER_NAME} || error "WORKLOAD CLUSTER CLEANUP USING azure CLI FAILED! Please manually delete any ${WORKLOAD_CLUSTER_NAME} workload cluster resources using Azure Web UI"
+    azure_cluster_cleanup || error "WORKLOAD CLUSTER CLEANUP USING azure CLI FAILED! Please manually delete any ${WORKLOAD_CLUSTER_NAME} workload cluster resources using Azure Web UI"
     unset_azure_env_vars
     unset CLUSTER_NAME
 }
