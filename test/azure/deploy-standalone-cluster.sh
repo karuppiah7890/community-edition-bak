@@ -94,23 +94,6 @@ function azure_cluster_cleanup {
         error "${failure_message}"
         return 1
     }
-}
-
-function accept_vm_image_terms {
-    azure_login
-
-    az_docker vm image terms accept --publisher ${VM_IMAGE_PUBLISHER} --offer ${VM_IMAGE_OFFER} \
-        --plan ${VM_IMAGE_BILLING_PLAN_SKU} --subscription "${AZURE_SUBSCRIPTION_ID}" || {
-        error "azure CLI ACCEPT VM IMAGE TERMS FAILED!"
-        return 1
-    }
-}
-
-function azure_cluster_cleanup {
-    failure_message="STANDLONE CLUSTER CLEANUP USING azure CLI FAILED! Please manually delete any ${CLUSTER_NAME} standalone cluster resources using Azure Web UI"
-    echo "Cleaning up ${CLUSTER_NAME} cluster resources using azure CLI"
-
-    azure_login
 
     az_docker group delete --name "${AZURE_RESOURCE_GROUP}" --yes || {
         error "azure CLI RESOURCE GROUP DELETION FAILED!"
