@@ -183,10 +183,6 @@ function list_packages {
 
 function test_gate_keeper_package {
     echo "Starting Gatekeeper test..."
-    kubectl config use-context "${WORKLOAD_CLUSTER_NAME}"-admin@"${WORKLOAD_CLUSTER_NAME}" || {
-        error "CONTEXT SWITCH TO WORKLOAD CLUSTER FAILED!";
-        return 1;
-    }
     "${TCE_REPO_PATH}"/test/gatekeeper/e2e-test.sh || {
         error "GATEKEEPER PACKAGE TEST FAILED!";
         return 1;
