@@ -22,7 +22,13 @@ set -x
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 TCE_REPO_PATH="${MY_DIR}"/../..
 
-"${TCE_REPO_PATH}"/test/azure/check-required-env-vars.sh
+declare -a required_env_vars=("AZURE_CLIENT_ID"
+"AZURE_CLIENT_SECRET"
+"AZURE_SSH_PUBLIC_KEY_B64"
+"AZURE_SUBSCRIPTION_ID"
+"AZURE_TENANT_ID")
+
+"${TCE_REPO_PATH}"/test/azure/check-required-env-vars.sh "${required_env_vars[@]}"
 
 # shellcheck source=test/util/utils.sh
 source "${TCE_REPO_PATH}"/test/util/utils.sh

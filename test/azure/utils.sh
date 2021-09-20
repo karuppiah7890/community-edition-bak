@@ -15,6 +15,16 @@ function az_docker {
 }
 
 function azure_login {
+    MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+    TCE_REPO_PATH="${MY_DIR}"/../..
+
+    declare -a required_env_vars=("AZURE_CLIENT_ID"
+    "AZURE_CLIENT_SECRET"
+    "AZURE_SUBSCRIPTION_ID"
+    "AZURE_TENANT_ID")
+
+    "${TCE_REPO_PATH}"/test/azure/check-required-env-vars.sh "${required_env_vars[@]}"
+
     az_docker login --service-principal --username "${AZURE_CLIENT_ID}" --password "${AZURE_CLIENT_SECRET}" \
         --tenant "${AZURE_TENANT_ID}" || {
         error "azure CLI LOGIN FAILED!"
@@ -28,6 +38,14 @@ function azure_login {
 }
 
 function azure_cluster_cleanup {
+    MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+    TCE_REPO_PATH="${MY_DIR}"/../..
+
+    declare -a required_env_vars=("CLUSTER_NAME"
+    "AZURE_RESOURCE_GROUP")
+
+    "${TCE_REPO_PATH}"/test/azure/check-required-env-vars.sh "${required_env_vars[@]}"
+
     echo "Cleaning up ${CLUSTER_NAME} cluster resources using azure CLI"
 
     azure_login || {
@@ -41,6 +59,16 @@ function azure_cluster_cleanup {
 }
 
 function accept_vm_image_terms {
+    MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+    TCE_REPO_PATH="${MY_DIR}"/../..
+
+    declare -a required_env_vars=("VM_IMAGE_PUBLISHER"
+    "VM_IMAGE_OFFER"
+    "VM_IMAGE_BILLING_PLAN_SKU"
+    "AZURE_SUBSCRIPTION_ID")
+
+    "${TCE_REPO_PATH}"/test/azure/check-required-env-vars.sh "${required_env_vars[@]}"
+
     azure_login || {
         return 1
     }
