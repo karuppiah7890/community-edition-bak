@@ -3,7 +3,7 @@ name: E2E Test - Azure Management and Workload Cluster
 on:
   push:
     branches:
-      - main
+      - azure-management-and-workload-cluster-e2e-trial2
     paths:
       - "**.go"
       - "cli/cmd/plugin/**/go.mod"
