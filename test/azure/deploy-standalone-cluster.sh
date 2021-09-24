@@ -117,6 +117,8 @@ function wait_for_pods {
         error "CONTEXT SWITCH TO STANDALONE CLUSTER FAILED!";
         return 1;
     }
+    kubectl get pods -A
+    kubectl get pods -A --no-headers | grep tkr-controller-manager | awk '{ print "kubectl describe pod -n", $1, $2, " | tail" }' | bash
     kubectl wait --for=condition=ready pod --all --all-namespaces --timeout=600s || {
         error "TIMED OUT WAITING FOR ALL PODS TO BE UP!";
         return 1;
@@ -155,10 +157,11 @@ create_standalone_cluster || {
 }
 
 wait_for_pods || {
+    kubectl get pods -A --no-headers | grep tkr-controller-manager | awk '{ print "kubectl describe pod -n", $1, $2, " | tail" }' | bash
+    tanzu diagnostics collect --bootstrap-cluster-skip --management-cluster-skip --workload-cluster-name "${CLUSTER_NAME}" --workload-cluster-infra azure
     delete_cluster_or_cleanup
     exit 1
 }
-
 
 add_package_repo || {
     delete_cluster_or_cleanup
