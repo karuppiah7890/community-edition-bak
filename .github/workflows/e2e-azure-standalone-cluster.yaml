@@ -15,7 +15,7 @@ on:
 jobs:
   e2e-azure-standalone-test:
     name: E2E Azure Standalone Cluster Test
-    runs-on: ec2-runner
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
