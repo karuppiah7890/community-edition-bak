@@ -36,7 +36,14 @@ source "${TCE_REPO_PATH}"/test/util/utils.sh
 source "${TCE_REPO_PATH}"/test/azure/utils.sh
 
 "${TCE_REPO_PATH}"/test/install-dependencies.sh || { error "Dependency installation failed!"; exit 1; }
-"${TCE_REPO_PATH}"/test/build-tce.sh || { error "TCE installation failed!"; exit 1; }
+# "${TCE_REPO_PATH}"/test/build-tce.sh || { error "TCE installation failed!"; exit 1; }
+
+wget https://storage.googleapis.com/tce-cli-plugins-staging/build-daily/146/tce-linux-amd64-v0.10.0-dev.1.tar.gz \
+    -O "${TCE_REPO_PATH}"/tce-linux-amd64-v0.10.0-dev.1.tar.gz
+
+tar -xvzf "${TCE_REPO_PATH}"/tce-linux-amd64-v0.10.0-dev.1.tar.gz --directory "${TCE_REPO_PATH}"
+
+"${TCE_REPO_PATH}"/tce-linux-amd64-v0.10.0-dev.1/install.sh
 
 export CLUSTER_NAME="test${RANDOM}"
 echo "Setting CLUSTER_NAME to ${CLUSTER_NAME}..."
