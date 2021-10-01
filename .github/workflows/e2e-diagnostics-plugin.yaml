@@ -3,7 +3,7 @@ name: E2E Test - Diagnostics Plugin
 on:
   push:
     branches:
-      - main
+      - fix-diagnostics-collect-output-dir-pipeline-trial
     paths:
       - "cli/cmd/plugin/diagnostics/**.go"
       - "cli/cmd/plugin/diagnostics/go.mod"
