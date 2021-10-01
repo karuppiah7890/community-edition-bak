@@ -67,10 +67,18 @@ function cleanup_standalone_cluster {
     }
 }
 
+function collect_diagnostics_data {
+    echo "Collecting diagnostics data"
+    tanzu diagnostics collect --workload-cluster-infra azure --workload-cluster-name ${CLUSTER_NAME} || {
+        error "There was an error collecting tanzu diagnostics data. Ignoring the error"
+    }
+}
+
 function delete_cluster_or_cleanup {
     echo "Deleting standalone cluster"
     time tanzu standalone-cluster delete ${CLUSTER_NAME} -y || {
         error "STANDALONE CLUSTER DELETION FAILED!";
+        collect_diagnostics_data
         cleanup_standalone_cluster
         return 1
     }
@@ -121,28 +129,33 @@ function test_gate_keeper_package {
 accept_vm_image_terms || exit 1
 
 create_standalone_cluster || {
+    collect_diagnostics_data
     delete_kind_cluster
     cleanup_standalone_cluster
     exit 1
 }
 
 wait_for_pods || {
+    collect_diagnostics_data
     delete_cluster_or_cleanup
     exit 1
 }
 
 
 add_package_repo || {
+    collect_diagnostics_data
     delete_cluster_or_cleanup
     exit 1
 }
 
 list_packages || {
+    collect_diagnostics_data
     delete_cluster_or_cleanup
     exit 1
 }
 
 test_gate_keeper_package || {
+    collect_diagnostics_data
     delete_cluster_or_cleanup
     exit 1
 }
