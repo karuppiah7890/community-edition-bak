@@ -45,6 +45,11 @@ tar -xvzf "${TCE_REPO_PATH}"/tce-linux-amd64-v0.10.0-dev.1.tar.gz --directory "$
 
 "${TCE_REPO_PATH}"/tce-linux-amd64-v0.10.0-dev.1/install.sh
 
+tanzu standalone-cluster version
+tanzu version
+
+rm -fv tce-linux-amd64-v0.10.0-dev.1.tar.gz
+
 export CLUSTER_NAME="test${RANDOM}"
 echo "Setting CLUSTER_NAME to ${CLUSTER_NAME}..."
 
