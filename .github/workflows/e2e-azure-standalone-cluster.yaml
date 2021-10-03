@@ -52,7 +52,4 @@ jobs:
         if: ${{ always() }}
         with:
           name: diagnostics-data
-          path: |
-            bootstrap.*.diagnostics.tar.gz
-            management-cluster.*.diagnostics.tar.gz
-            workload-cluster.*.diagnostics.tar.gz
+          path: "*.tar.gz"
